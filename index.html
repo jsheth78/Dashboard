@@ -102,7 +102,20 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .card-header a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.7rem;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .card-header a:hover { color: var(--accent-hover); }
 
         .widget-container {
             width: 100%;
@@ -111,6 +124,41 @@
 
         .widget-container.short { height: 80px; }
         .widget-container.tall { height: 500px; }
+
+        /* FRED chart images */
+        .fred-chart {
+            width: 100%;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .fred-chart a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .fred-chart img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .fred-source {
+            padding: 4px 16px 8px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .fred-source a {
+            color: var(--accent);
+            text-decoration: none;
+        }
 
         /* Tablet+ layout */
         @media (min-width: 768px) {
@@ -176,11 +224,11 @@
 
     <!-- Tab Navigation -->
     <nav class="tab-nav">
-        <button class="active" onclick="showPage('economic')">Economic Indicators</button>
-        <button onclick="showPage('equities')">Equities</button>
-        <button onclick="showPage('fixed-income')">Fixed Income</button>
-        <button onclick="showPage('commodities')">Commodities</button>
-        <button onclick="showPage('currencies')">Currencies</button>
+        <button class="active" onclick="showPage('economic', this)">Economic Indicators</button>
+        <button onclick="showPage('equities', this)">Equities</button>
+        <button onclick="showPage('fixed-income', this)">Fixed Income</button>
+        <button onclick="showPage('commodities', this)">Commodities</button>
+        <button onclick="showPage('currencies', this)">Currencies</button>
     </nav>
 
     <!-- ==================== PAGE 1: ECONOMIC INDICATORS ==================== -->
@@ -188,23 +236,55 @@
         <div class="dashboard">
 
             <div class="card">
-                <div class="card-header">Empire Manufacturing</div>
-                <div class="widget-container" id="chart-empire"></div>
+                <div class="card-header">
+                    Empire Manufacturing
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="fred-chart">
+                    <a href="https://fred.stlouisfed.org/series/GACDISA066MSFRBNY" target="_blank" rel="noopener">
+                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=GACDISA066MSFRBNY&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Monthly&fam=avg" alt="Empire State Manufacturing Index" loading="lazy">
+                    </a>
+                </div>
+                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/GACDISA066MSFRBNY" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
             </div>
 
             <div class="card">
-                <div class="card-header">ADP Employment Change</div>
-                <div class="widget-container" id="chart-adp"></div>
+                <div class="card-header">
+                    ADP Employment Change
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="fred-chart">
+                    <a href="https://fred.stlouisfed.org/series/ADPWNUSNERSA" target="_blank" rel="noopener">
+                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=ADPWNUSNERSA&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Monthly&fam=avg" alt="ADP National Employment" loading="lazy">
+                    </a>
+                </div>
+                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/ADPWNUSNERSA" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
             </div>
 
             <div class="card">
-                <div class="card-header">PPI Ex Food &amp; Energy Y/Y</div>
-                <div class="widget-container" id="chart-ppi"></div>
+                <div class="card-header">
+                    PPI Ex Food &amp; Energy Y/Y
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="fred-chart">
+                    <a href="https://fred.stlouisfed.org/series/PPIFES" target="_blank" rel="noopener">
+                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=PPIFES&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Monthly&fam=avg&transformation=pc1" alt="PPI Excluding Food and Energy" loading="lazy">
+                    </a>
+                </div>
+                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/PPIFES" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
             </div>
 
             <div class="card">
-                <div class="card-header">Initial Jobless Claims &mdash; 4 Week Moving Avg</div>
-                <div class="widget-container" id="chart-jobless"></div>
+                <div class="card-header">
+                    Initial Jobless Claims &mdash; 4 Week Moving Avg
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="fred-chart">
+                    <a href="https://fred.stlouisfed.org/series/IC4WSA" target="_blank" rel="noopener">
+                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=IC4WSA&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Weekly%2C+Ending+Saturday&fam=avg" alt="4-Week Moving Average of Initial Claims" loading="lazy">
+                    </a>
+                </div>
+                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/IC4WSA" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
             </div>
 
         </div>
@@ -239,7 +319,7 @@
                 <div class="widget-container" id="chart-topix"></div>
             </div>
 
-            <div class="card">
+            <div class="card full-width">
                 <div class="card-header">S&amp;P 500 Heatmap</div>
                 <div class="widget-container tall" id="chart-heatmap"></div>
             </div>
@@ -252,23 +332,50 @@
         <div class="dashboard">
 
             <div class="card full-width">
-                <div class="card-header">Fed Funds Futures Curve</div>
+                <div class="card-header">
+                    Fed Funds Futures
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg Rates &rarr;</a>
+                </div>
                 <div class="widget-container tall" id="chart-ff-curve"></div>
             </div>
 
             <div class="card">
-                <div class="card-header">2s10s Yield Spread</div>
-                <div class="widget-container" id="chart-2s10s"></div>
+                <div class="card-header">
+                    2s10s Treasury Yield Spread
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="fred-chart">
+                    <a href="https://fred.stlouisfed.org/series/T10Y2Y" target="_blank" rel="noopener">
+                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=T10Y2Y&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Daily&fam=avg" alt="10-Year minus 2-Year Treasury Spread" loading="lazy">
+                    </a>
+                </div>
+                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/T10Y2Y" target="_blank">FRED</a></div>
             </div>
 
             <div class="card">
-                <div class="card-header">Investment Grade Credit Spreads (OAS)</div>
-                <div class="widget-container" id="chart-ig"></div>
+                <div class="card-header">
+                    Investment Grade Credit Spreads (OAS)
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="fred-chart">
+                    <a href="https://fred.stlouisfed.org/series/BAMLC0A0CM" target="_blank" rel="noopener">
+                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=BAMLC0A0CM&scale=left&cosd=2020-01-01&line_color=%2300bcd4&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Daily&fam=avg" alt="ICE BofA US Corporate Master OAS" loading="lazy">
+                    </a>
+                </div>
+                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/BAMLC0A0CM" target="_blank">FRED &mdash; ICE BofA US Corporate Index OAS</a></div>
             </div>
 
             <div class="card">
-                <div class="card-header">High Yield Credit Spreads (OAS)</div>
-                <div class="widget-container" id="chart-hy"></div>
+                <div class="card-header">
+                    High Yield Credit Spreads (OAS)
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="fred-chart">
+                    <a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2" target="_blank" rel="noopener">
+                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=BAMLH0A0HYM2&scale=left&cosd=2020-01-01&line_color=%23ff9800&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Daily&fam=avg" alt="ICE BofA US High Yield Master II OAS" loading="lazy">
+                    </a>
+                </div>
+                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2" target="_blank">FRED &mdash; ICE BofA US High Yield Index OAS</a></div>
             </div>
 
         </div>
@@ -344,55 +451,45 @@
     </div>
 
     <div class="updated-note">
-        Live data powered by TradingView
+        Market data powered by TradingView &bull; Economic data from FRED (Federal Reserve Bank of St. Louis)
     </div>
 
     <script>
-    // ── Chart configuration ──────────────────────────────────────────
-    const charts = {
-        // Economic Indicators
-        'chart-empire':   { symbol: 'FRED:GACDISA066MSFRBNY', title: 'Empire Manufacturing Index' },
-        'chart-adp':      { symbol: 'FRED:ADPWNUSNERSA', title: 'ADP Employment Change' },
-        'chart-ppi':      { symbol: 'FRED:PPIFES', title: 'PPI Ex Food & Energy' },
-        'chart-jobless':  { symbol: 'FRED:IC4WSA', title: 'Initial Claims 4-Wk Avg' },
+    // ── TradingView chart configuration (market instruments only) ────
+    var tvCharts = {
         // Equities
-        'chart-spx':        { symbol: 'FOREXCOM:SPXUSD', title: 'S&P 500' },
-        'chart-ndx':        { symbol: 'FOREXCOM:NSXUSD', title: 'Nasdaq 100' },
-        'chart-ftse':       { symbol: 'TVC:UKX', title: 'FTSE 100' },
-        'chart-eurostoxx':  { symbol: 'TVC:SX5E', title: 'Euro Stoxx 50' },
-        'chart-topix':      { symbol: 'TSE:TOPIX', title: 'TOPIX' },
-        // Fixed Income
-        'chart-2s10s': { symbol: 'FRED:T10Y2Y', title: '2-10 Year Treasury Spread' },
-        'chart-ig':    { symbol: 'FRED:BAMLC0A0CM', title: 'IG Corporate OAS' },
-        'chart-hy':    { symbol: 'FRED:BAMLH0A0HYM2', title: 'HY Corporate OAS' },
+        'chart-spx':        { symbol: 'FOREXCOM:SPXUSD' },
+        'chart-ndx':        { symbol: 'FOREXCOM:NSXUSD' },
+        'chart-ftse':       { symbol: 'TVC:UKX' },
+        'chart-eurostoxx':  { symbol: 'TVC:SX5E' },
+        'chart-topix':      { symbol: 'TVC:TOPX' },
         // Commodities
-        'chart-wti':    { symbol: 'NYMEX:CL1!', title: 'WTI Crude Oil' },
-        'chart-brent':  { symbol: 'NYMEX:BZ1!', title: 'Brent Crude Oil' },
-        'chart-natgas': { symbol: 'NYMEX:NG1!', title: 'Henry Hub Natural Gas' },
+        'chart-wti':    { symbol: 'NYMEX:CL1!' },
+        'chart-brent':  { symbol: 'NYMEX:BZ1!' },
+        'chart-natgas': { symbol: 'NYMEX:NG1!' },
         // Currencies
-        'chart-eurusd': { symbol: 'FX:EURUSD', title: 'EUR/USD' },
-        'chart-gbpusd': { symbol: 'FX:GBPUSD', title: 'GBP/USD' },
-        'chart-usdjpy': { symbol: 'FX:USDJPY', title: 'USD/JPY' },
-        'chart-usdchf': { symbol: 'FX:USDCHF', title: 'USD/CHF' },
-        'chart-audusd': { symbol: 'FX:AUDUSD', title: 'AUD/USD' },
-        'chart-usdcad': { symbol: 'FX:USDCAD', title: 'USD/CAD' },
-        'chart-nzdusd': { symbol: 'FX:NZDUSD', title: 'NZD/USD' }
+        'chart-eurusd': { symbol: 'FX:EURUSD' },
+        'chart-gbpusd': { symbol: 'FX:GBPUSD' },
+        'chart-usdjpy': { symbol: 'FX:USDJPY' },
+        'chart-usdchf': { symbol: 'FX:USDCHF' },
+        'chart-audusd': { symbol: 'FX:AUDUSD' },
+        'chart-usdcad': { symbol: 'FX:USDCAD' },
+        'chart-nzdusd': { symbol: 'FX:NZDUSD' }
     };
 
-    // Track which containers have been initialized
-    const initialized = new Set();
+    var initialized = {};
 
     function createAdvancedChart(containerId, cfg) {
-        const el = document.getElementById(containerId);
-        if (!el || initialized.has(containerId)) return;
-        initialized.add(containerId);
+        var el = document.getElementById(containerId);
+        if (!el || initialized[containerId]) return;
+        initialized[containerId] = true;
 
-        const wrapper = document.createElement('div');
+        var wrapper = document.createElement('div');
         wrapper.className = 'tradingview-widget-container';
         wrapper.style.cssText = 'height:100%;width:100%';
         wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
 
-        const script = document.createElement('script');
+        var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
         script.async = true;
@@ -416,16 +513,16 @@
     }
 
     function createHeatmap(containerId) {
-        const el = document.getElementById(containerId);
-        if (!el || initialized.has(containerId)) return;
-        initialized.add(containerId);
+        var el = document.getElementById(containerId);
+        if (!el || initialized[containerId]) return;
+        initialized[containerId] = true;
 
-        const wrapper = document.createElement('div');
+        var wrapper = document.createElement('div');
         wrapper.className = 'tradingview-widget-container';
         wrapper.style.cssText = 'height:100%;width:100%';
         wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
 
-        const script = document.createElement('script');
+        var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js';
         script.async = true;
@@ -436,7 +533,6 @@
             "blockSize": "market_cap_basic",
             "blockColor": "change",
             "locale": "en",
-            "symbolUrl": "",
             "colorTheme": "dark",
             "hasTopBar": true,
             "isDataSetEnabled": true,
@@ -451,16 +547,16 @@
     }
 
     function createFedFundsCurve(containerId) {
-        const el = document.getElementById(containerId);
-        if (!el || initialized.has(containerId)) return;
-        initialized.add(containerId);
+        var el = document.getElementById(containerId);
+        if (!el || initialized[containerId]) return;
+        initialized[containerId] = true;
 
-        const wrapper = document.createElement('div');
+        var wrapper = document.createElement('div');
         wrapper.className = 'tradingview-widget-container';
         wrapper.style.cssText = 'height:100%;width:100%';
         wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
 
-        const script = document.createElement('script');
+        var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
         script.async = true;
@@ -491,16 +587,16 @@
     }
 
     function createForexCrossRates(containerId) {
-        const el = document.getElementById(containerId);
-        if (!el || initialized.has(containerId)) return;
-        initialized.add(containerId);
+        var el = document.getElementById(containerId);
+        if (!el || initialized[containerId]) return;
+        initialized[containerId] = true;
 
-        const wrapper = document.createElement('div');
+        var wrapper = document.createElement('div');
         wrapper.className = 'tradingview-widget-container';
         wrapper.style.cssText = 'height:100%;width:100%';
         wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
 
-        const script = document.createElement('script');
+        var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js';
         script.async = true;
@@ -517,41 +613,37 @@
     }
 
     // ── Page switching & lazy loading ────────────────────────────────
-    const pageCharts = {
-        'economic':     ['chart-empire','chart-adp','chart-ppi','chart-jobless'],
+    var pageTvCharts = {
         'equities':     ['chart-spx','chart-ndx','chart-ftse','chart-eurostoxx','chart-topix'],
-        'fixed-income': ['chart-2s10s','chart-ig','chart-hy'],
         'commodities':  ['chart-wti','chart-brent','chart-natgas'],
         'currencies':   ['chart-eurusd','chart-gbpusd','chart-usdjpy','chart-usdchf','chart-audusd','chart-usdcad','chart-nzdusd']
     };
 
     function initPage(pageId) {
-        // Standard advanced charts
-        if (pageCharts[pageId]) {
-            pageCharts[pageId].forEach(function(id) {
-                if (charts[id]) createAdvancedChart(id, charts[id]);
+        // TradingView advanced charts
+        if (pageTvCharts[pageId]) {
+            pageTvCharts[pageId].forEach(function(id) {
+                if (tvCharts[id]) createAdvancedChart(id, tvCharts[id]);
             });
         }
         // Special widgets
         if (pageId === 'equities') createHeatmap('chart-heatmap');
         if (pageId === 'fixed-income') createFedFundsCurve('chart-ff-curve');
         if (pageId === 'currencies') createForexCrossRates('chart-fx-cross');
+        // Economic indicators and fixed income FRED charts are static images — no JS init needed
     }
 
-    function showPage(pageId) {
+    function showPage(pageId, btn) {
         // Hide all pages
         document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
         // Show selected page
         document.getElementById('page-' + pageId).classList.add('active');
         // Update tab buttons
         document.querySelectorAll('.tab-nav button').forEach(function(b) { b.classList.remove('active'); });
-        event.currentTarget.classList.add('active');
-        // Lazy-load charts
+        btn.classList.add('active');
+        // Lazy-load TradingView charts
         initPage(pageId);
     }
-
-    // Initialize first page on load
-    initPage('economic');
     </script>
 </body>
 </html>
