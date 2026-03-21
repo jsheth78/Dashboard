@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic &amp; Market Dashboard</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #1a1d29;
+            --border: #2a2e3d;
+            --text: #e1e4ea;
+            --text-muted: #8b8fa3;
+            --accent: #4a9eff;
+            --accent-hover: #6db3ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .bloomberg-links {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .bloomberg-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: all 0.15s;
+        }
+
+        .bloomberg-links a:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 12px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.7rem;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .card-header a:hover { color: var(--accent-hover); }
+
+        .widget-container {
+            width: 100%;
+            min-height: 300px;
+        }
+
+        .widget-container.tall { min-height: 450px; }
+        .widget-container.short { min-height: 200px; }
+
+        /* Tablet+ layout */
+        @media (min-width: 768px) {
+            header { padding: 16px 24px; }
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                padding: 16px;
+            }
+            .full-width { grid-column: 1 / -1; }
+            header h1 { font-size: 1.4rem; }
+        }
+
+        /* Desktop layout */
+        @media (min-width: 1200px) {
+            .dashboard {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                padding: 20px;
+            }
+        }
+
+        .updated-note {
+            text-align: center;
+            padding: 12px;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Economic &amp; Market Dashboard</h1>
+        <div class="bloomberg-links">
+            <a href="https://www.bloomberg.com/markets" target="_blank" rel="noopener">Bloomberg Markets</a>
+            <a href="https://www.bloomberg.com/economics" target="_blank" rel="noopener">Economics</a>
+            <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Econ Calendar</a>
+            <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Rates &amp; Bonds</a>
+            <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Commodities</a>
+        </div>
+    </header>
+
+    <div class="dashboard">
+
+        <!-- Ticker Tape -->
+        <div class="card full-width">
+            <div class="widget-container short">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                        "symbols": [
+                            {"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},
+                            {"proName":"FOREXCOM:NSXUSD","title":"US 100"},
+                            {"proName":"INDEX:DJI","title":"Dow 30"},
+                            {"proName":"INDEX:RUT","title":"Russell 2000"},
+                            {"proName":"INDEX:VIX","title":"VIX"},
+                            {"proName":"TVC:US10Y","title":"US 10Y"},
+                            {"proName":"TVC:US02Y","title":"US 2Y"},
+                            {"proName":"TVC:DXY","title":"US Dollar"},
+                            {"proName":"FX:EURUSD","title":"EUR/USD"},
+                            {"proName":"FX:GBPUSD","title":"GBP/USD"},
+                            {"proName":"FX:USDJPY","title":"USD/JPY"},
+                            {"proName":"TVC:GOLD","title":"Gold"},
+                            {"proName":"NYMEX:CL1!","title":"Crude Oil"},
+                            {"proName":"BITSTAMP:BTCUSD","title":"Bitcoin"}
+                        ],
+                        "showSymbolDescription": true,
+                        "colorTheme": "dark",
+                        "isTransparent": true,
+                        "displayMode": "adaptive",
+                        "locale": "en"
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Overview -->
+        <div class="card full-width">
+            <div class="card-header">
+                Market Overview
+                <a href="https://www.bloomberg.com/markets" target="_blank" rel="noopener">Bloomberg Markets &rarr;</a>
+            </div>
+            <div class="widget-container tall">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                    {
+                        "colorTheme": "dark",
+                        "dateRange": "12M",
+                        "showChart": true,
+                        "locale": "en",
+                        "isTransparent": true,
+                        "height": "100%",
+                        "width": "100%",
+                        "showFloatingTooltip": true,
+                        "tabs": [
+                            {
+                                "title": "Indices",
+                                "symbols": [
+                                    {"s":"FOREXCOM:SPXUSD","d":"S&P 500"},
+                                    {"s":"FOREXCOM:NSXUSD","d":"Nasdaq 100"},
+                                    {"s":"INDEX:DJI","d":"Dow Jones"},
+                                    {"s":"INDEX:RUT","d":"Russell 2000"},
+                                    {"s":"TVC:UKX","d":"FTSE 100"},
+                                    {"s":"TVC:DEU40","d":"DAX"},
+                                    {"s":"TVC:NI225","d":"Nikkei 225"},
+                                    {"s":"TVC:HSI","d":"Hang Seng"}
+                                ],
+                                "originalTitle": "Indices"
+                            },
+                            {
+                                "title": "Bonds",
+                                "symbols": [
+                                    {"s":"TVC:US02Y","d":"US 2Y Yield"},
+                                    {"s":"TVC:US05Y","d":"US 5Y Yield"},
+                                    {"s":"TVC:US10Y","d":"US 10Y Yield"},
+                                    {"s":"TVC:US30Y","d":"US 30Y Yield"},
+                                    {"s":"TVC:DE10Y","d":"Germany 10Y"},
+                                    {"s":"TVC:GB10Y","d":"UK 10Y"},
+                                    {"s":"TVC:JP10Y","d":"Japan 10Y"}
+                                ],
+                                "originalTitle": "Bonds"
+                            },
+                            {
+                                "title": "Forex",
+                                "symbols": [
+                                    {"s":"TVC:DXY","d":"US Dollar Index"},
+                                    {"s":"FX:EURUSD","d":"EUR/USD"},
+                                    {"s":"FX:GBPUSD","d":"GBP/USD"},
+                                    {"s":"FX:USDJPY","d":"USD/JPY"},
+                                    {"s":"FX:USDCHF","d":"USD/CHF"},
+                                    {"s":"FX:AUDUSD","d":"AUD/USD"},
+                                    {"s":"FX:USDCAD","d":"USD/CAD"}
+                                ],
+                                "originalTitle": "Forex"
+                            },
+                            {
+                                "title": "Commodities",
+                                "symbols": [
+                                    {"s":"TVC:GOLD","d":"Gold"},
+                                    {"s":"TVC:SILVER","d":"Silver"},
+                                    {"s":"NYMEX:CL1!","d":"Crude Oil WTI"},
+                                    {"s":"NYMEX:NG1!","d":"Natural Gas"},
+                                    {"s":"CBOT:ZC1!","d":"Corn"},
+                                    {"s":"CBOT:ZW1!","d":"Wheat"},
+                                    {"s":"NYMEX:HG1!","d":"Copper"}
+                                ],
+                                "originalTitle": "Commodities"
+                            }
+                        ]
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="card full-width">
+            <div class="card-header">
+                S&amp;P 500 Heatmap
+                <a href="https://www.bloomberg.com/markets/stocks" target="_blank" rel="noopener">Bloomberg Stocks &rarr;</a>
+            </div>
+            <div class="widget-container tall">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
+                    {
+                        "exchanges": [],
+                        "dataSource": "SPX500",
+                        "grouping": "sector",
+                        "blockSize": "market_cap_basic",
+                        "blockColor": "change",
+                        "locale": "en",
+                        "symbolUrl": "",
+                        "colorTheme": "dark",
+                        "hasTopBar": true,
+                        "isDataSetEnabled": true,
+                        "isZoomEnabled": true,
+                        "hasSymbolTooltip": true,
+                        "isTransparent": true,
+                        "width": "100%",
+                        "height": "100%"
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Economic Calendar -->
+        <div class="card full-width">
+            <div class="card-header">
+                Economic Calendar
+                <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg Calendar &rarr;</a>
+            </div>
+            <div class="widget-container tall">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    {
+                        "colorTheme": "dark",
+                        "isTransparent": true,
+                        "width": "100%",
+                        "height": "100%",
+                        "locale": "en",
+                        "importanceFilter": "0,1",
+                        "countryFilter": "us,eu,gb,jp,cn,de"
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forex Cross Rates -->
+        <div class="card">
+            <div class="card-header">
+                Forex Cross Rates
+                <a href="https://www.bloomberg.com/markets/currencies" target="_blank" rel="noopener">Bloomberg FX &rarr;</a>
+            </div>
+            <div class="widget-container">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js" async>
+                    {
+                        "currencies": ["EUR","USD","JPY","GBP","CHF","AUD","CAD","CNY"],
+                        "isTransparent": true,
+                        "colorTheme": "dark",
+                        "width": "100%",
+                        "height": "100%",
+                        "locale": "en"
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forex Heatmap -->
+        <div class="card">
+            <div class="card-header">
+                Forex Heatmap
+            </div>
+            <div class="widget-container">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+                    {
+                        "currencies": ["EUR","USD","JPY","GBP","CHF","AUD","CAD","NZD","CNY"],
+                        "isTransparent": true,
+                        "colorTheme": "dark",
+                        "width": "100%",
+                        "height": "100%",
+                        "locale": "en"
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screener -->
+        <div class="card">
+            <div class="card-header">
+                Stock Screener
+            </div>
+            <div class="widget-container tall">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+                    {
+                        "width": "100%",
+                        "height": "100%",
+                        "defaultColumn": "overview",
+                        "defaultScreen": "most_capitalized",
+                        "market": "america",
+                        "showToolbar": true,
+                        "colorTheme": "dark",
+                        "locale": "en",
+                        "isTransparent": true
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="updated-note">
+        Live data powered by TradingView &bull; Links to Bloomberg for in-depth analysis
+    </div>
+</body>
+</html>
