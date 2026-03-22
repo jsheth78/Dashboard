@@ -103,14 +103,24 @@
             letter-spacing: 0.05em;
             border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 6px;
         }
 
         .card-header a {
             color: var(--accent);
             text-decoration: none;
             font-size: 0.7rem;
+            text-transform: none;
+            letter-spacing: normal;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .card-header .latest-value {
+            font-weight: 400;
+            color: var(--text);
+            font-size: 0.8rem;
             text-transform: none;
             letter-spacing: normal;
         }
@@ -125,37 +135,73 @@
         .widget-container.short { height: 80px; }
         .widget-container.tall { height: 500px; }
 
-        /* FRED chart images */
-        .fred-chart {
+        /* Plotly chart containers */
+        .plotly-chart {
             width: 100%;
             height: 400px;
+            position: relative;
+        }
+
+        .plotly-chart .chart-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
 
-        .fred-chart a {
-            display: block;
-            width: 100%;
-            height: 100%;
+        .plotly-chart .chart-loading .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
         }
 
-        .fred-chart img {
+        .plotly-chart .chart-error {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            gap: 8px;
+        }
+
+        .plotly-chart .chart-error button {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
             border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
         }
 
-        .fred-source {
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .chart-source {
             padding: 4px 16px 8px;
             font-size: 0.65rem;
             color: var(--text-muted);
             text-align: right;
         }
 
-        .fred-source a {
+        .chart-source a {
             color: var(--accent);
             text-decoration: none;
         }
@@ -181,46 +227,136 @@
             }
         }
 
+        /* Valuation table */
+        .valuation-table-wrap {
+            padding: 0 16px 12px;
+            overflow-x: auto;
+            position: relative;
+            min-height: 60px;
+        }
+
+        .valuation-table-wrap .chart-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .valuation-table-wrap .chart-loading .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        .valuation-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .valuation-table th {
+            text-align: right;
+            padding: 8px 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .valuation-table th:first-child {
+            text-align: left;
+        }
+
+        .valuation-table td {
+            padding: 7px 12px;
+            text-align: right;
+            border-bottom: 1px solid rgba(42,46,61,0.3);
+            white-space: nowrap;
+        }
+
+        .valuation-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .valuation-table tbody tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .valuation-table .val-positive { color: #4caf50; }
+        .valuation-table .val-negative { color: #f44336; }
+        .valuation-table .val-na { color: var(--text-muted); }
+
         .updated-note {
             text-align: center;
             padding: 12px;
             color: var(--text-muted);
             font-size: 0.7rem;
         }
+
+        /* Drag and drop */
+        .card {
+            cursor: grab;
+            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:active { cursor: grabbing; }
+
+        .card.dragging {
+            opacity: 0.4;
+            transform: scale(0.97);
+        }
+
+        .card.drag-over {
+            box-shadow: 0 0 0 2px var(--accent);
+            transform: scale(1.01);
+        }
+
+        .dashboard.drag-active .card:not(.dragging):not(.drag-over) {
+            opacity: 0.7;
+        }
+
+        .reset-order-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 3px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            margin-left: 8px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .reset-order-btn:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
     </style>
+    <!-- Bloomberg data fallback for file:// mode (generated by refresh_data.py) -->
+    <script>
+    // Cache-busting: load bloomberg_data.js with a timestamp query param
+    (function() {
+        var s = document.createElement('script');
+        s.src = 'data/bloomberg_data.js?t=' + Date.now();
+        s.onerror = function() {}; // silently ignore if file missing
+        document.head.appendChild(s);
+    })();
+    </script>
 </head>
 <body>
     <header>
         <h1>Dashboard</h1>
     </header>
-
-    <!-- Ticker Tape (always visible) -->
-    <div style="background:var(--card-bg);border-bottom:1px solid var(--border)">
-        <div class="tradingview-widget-container" style="height:46px;width:100%">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-            {
-                "symbols": [
-                    {"proName":"FOREXCOM:SPXUSD","title":"S&P 500"},
-                    {"proName":"FOREXCOM:NSXUSD","title":"Nasdaq 100"},
-                    {"proName":"INDEX:DJI","title":"Dow 30"},
-                    {"proName":"TVC:US10Y","title":"US 10Y"},
-                    {"proName":"TVC:US02Y","title":"US 2Y"},
-                    {"proName":"TVC:DXY","title":"Dollar"},
-                    {"proName":"FX:EURUSD","title":"EUR/USD"},
-                    {"proName":"TVC:GOLD","title":"Gold"},
-                    {"proName":"NYMEX:CL1!","title":"WTI Crude"},
-                    {"proName":"INDEX:VIX","title":"VIX"}
-                ],
-                "showSymbolDescription": true,
-                "colorTheme": "dark",
-                "isTransparent": true,
-                "displayMode": "adaptive",
-                "locale": "en"
-            }
-            </script>
-        </div>
-    </div>
 
     <!-- Tab Navigation -->
     <nav class="tab-nav">
@@ -237,15 +373,101 @@
 
             <div class="card">
                 <div class="card-header">
-                    Empire Manufacturing
+                    Nonfarm Payrolls
                     <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-chart">
-                    <a href="https://fred.stlouisfed.org/series/GACDISA066MSFRBNY" target="_blank" rel="noopener">
-                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=GACDISA066MSFRBNY&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Monthly&fam=avg" alt="Empire State Manufacturing Index" loading="lazy">
-                    </a>
+                <div class="plotly-chart" id="plotly-nfp"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NFP TCH Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Unemployment Rate
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/GACDISA066MSFRBNY" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
+                <div class="plotly-chart" id="plotly-unrate"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USURTOT Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Core CPI Y/Y
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-core-cpi"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CPI XYOY Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Core PCE Y/Y
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-core-pce"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (PCE CYOY Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    GDP Growth Y/Y
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-gdp"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GDP CYOY Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Atlanta Fed GDPNow
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-gdpnow"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GDGCAFJP Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    ISM Manufacturing PMI
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ism-mfg"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NAPMPMI Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    ISM Services PMI
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ism-svc"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NAPMNMI Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Retail Sales Y/Y
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-retail-sales"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (RSTAYOY Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    UMich Consumer Sentiment
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-umich"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CONSSENT Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Core PPI Y/Y
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-core-ppi"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (PPI XYOY Index)</div>
             </div>
 
             <div class="card">
@@ -253,25 +475,8 @@
                     ADP Employment Change
                     <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-chart">
-                    <a href="https://fred.stlouisfed.org/series/ADPWNUSNERSA" target="_blank" rel="noopener">
-                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=ADPWNUSNERSA&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Monthly&fam=avg" alt="ADP National Employment" loading="lazy">
-                    </a>
-                </div>
-                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/ADPWNUSNERSA" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    PPI Ex Food &amp; Energy Y/Y
-                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
-                </div>
-                <div class="fred-chart">
-                    <a href="https://fred.stlouisfed.org/series/PPIFES" target="_blank" rel="noopener">
-                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=PPIFES&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Monthly&fam=avg&transformation=pc1" alt="PPI Excluding Food and Energy" loading="lazy">
-                    </a>
-                </div>
-                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/PPIFES" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
+                <div class="plotly-chart" id="plotly-adp"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (ADP CHNG Index)</div>
             </div>
 
             <div class="card">
@@ -279,12 +484,134 @@
                     Initial Jobless Claims &mdash; 4 Week Moving Avg
                     <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-chart">
-                    <a href="https://fred.stlouisfed.org/series/IC4WSA" target="_blank" rel="noopener">
-                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=IC4WSA&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Weekly%2C+Ending+Saturday&fam=avg" alt="4-Week Moving Average of Initial Claims" loading="lazy">
-                    </a>
+                <div class="plotly-chart" id="plotly-claims"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (INJCJC4 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Durable Goods Orders
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/IC4WSA" target="_blank">FRED, Federal Reserve Bank of St. Louis</a></div>
+                <div class="plotly-chart" id="plotly-durable-goods"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (DGNOCHNG Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Housing Starts
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-housing-starts"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NHSPSTOT Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Existing Home Sales
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-existing-homes"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (ETSLTOTL Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Industrial Production
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-industrial-prod"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (IP CHNG Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Personal Income &amp; Outlays
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-personal-income"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (PITLCHNG Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Employment Cost Index Y/Y
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-eci"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (ECI SA% Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Conference Board Consumer Confidence
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-consumer-conf"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CONCCONF Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Trade Balance
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-trade-balance"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USTBTOT Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    NFIB Small Business Index
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-nfib"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SBOITOTL Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    VIX
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-vix"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (VIX Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Chicago Fed National Activity Index
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-cfnai"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CFNAI Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Chicago Fed Financial Conditions
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-nfci"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NFCIINDX Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    GS Financial Conditions Index
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-gsfci"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GSFCI Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Bloomberg Financial Conditions
+                    <a href="https://www.bloomberg.com/markets/economic-calendar" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-bfcius"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (BFCIUS Index)</div>
             </div>
 
         </div>
@@ -295,33 +622,230 @@
         <div class="dashboard">
 
             <div class="card">
-                <div class="card-header">S&amp;P 500</div>
-                <div class="widget-container" id="chart-spx"></div>
+                <div class="card-header">
+                    S&amp;P 500
+                    <a href="https://www.bloomberg.com/quote/SPX:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-spx"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SPX Index)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">Nasdaq 100</div>
-                <div class="widget-container" id="chart-ndx"></div>
+                <div class="card-header">
+                    Nasdaq 100
+                    <a href="https://www.bloomberg.com/quote/NDX:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ndx"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NDX Index)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">FTSE 100</div>
-                <div class="widget-container" id="chart-ftse"></div>
+                <div class="card-header">
+                    Dow Jones Industrial Average
+                    <a href="https://www.bloomberg.com/quote/INDU:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-djia"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (INDU Index)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">Euro Stoxx 50</div>
-                <div class="widget-container" id="chart-eurostoxx"></div>
+                <div class="card-header">
+                    S&amp;P/TSX Composite
+                    <a href="https://www.bloomberg.com/quote/SPTSX:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-tsx"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SPTSX Index)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">TOPIX</div>
-                <div class="widget-container" id="chart-topix"></div>
+                <div class="card-header">
+                    Euro Stoxx 50
+                    <a href="https://www.bloomberg.com/quote/SX5E:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-eurostoxx"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SX5E Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    DAX 40
+                    <a href="https://www.bloomberg.com/quote/DAX:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-dax"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (DAX Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    FTSE 100
+                    <a href="https://www.bloomberg.com/quote/UKX:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ftse"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (UKX Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    CAC 40
+                    <a href="https://www.bloomberg.com/quote/CAC:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-cac"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CAC Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    IBEX 35
+                    <a href="https://www.bloomberg.com/quote/IBEX:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ibex"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (IBEX Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    FTSE MIB
+                    <a href="https://www.bloomberg.com/quote/FTSEMIB:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ftsemib"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (FTSEMIB Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Nikkei 225
+                    <a href="https://www.bloomberg.com/quote/NKY:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-nikkei"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NKY Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    KOSPI
+                    <a href="https://www.bloomberg.com/quote/KOSPI:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-kospi"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (KOSPI Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    TAIEX
+                    <a href="https://www.bloomberg.com/quote/TWSE:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-taiex"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (TWSE Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    CSI 300
+                    <a href="https://www.bloomberg.com/quote/SHSZ300:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-csi300"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SHSZ300 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Hang Seng
+                    <a href="https://www.bloomberg.com/quote/HSI:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-hsi"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (HSI Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    ASX 200
+                    <a href="https://www.bloomberg.com/quote/AS51:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-asx200"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (AS51 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    IBOVESPA
+                    <a href="https://www.bloomberg.com/quote/IBOV:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ibov"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (IBOV Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Mexico IPC
+                    <a href="https://www.bloomberg.com/quote/MEXBOL:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-mexbol"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (MEXBOL Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    MSCI ACWI
+                    <a href="https://www.bloomberg.com/quote/MXWD:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-acwi"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (MXWD Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    MSCI Emerging Markets
+                    <a href="https://www.bloomberg.com/quote/MXEF:IND" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-em"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (MXEF Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    NYSE Advance/Decline Line
+                    <a href="https://www.bloomberg.com/markets/stocks" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-nyad"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NYAD Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    S&amp;P 500 % Above 200 DMA
+                    <a href="https://www.bloomberg.com/markets/stocks" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-spx-above200"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (TRADPAUS Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    NYSE New 52W Highs &minus; Lows
+                    <a href="https://www.bloomberg.com/markets/stocks" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-highs-lows"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (TRADHILO Index)</div>
             </div>
 
             <div class="card full-width">
-                <div class="card-header">S&amp;P 500 Heatmap</div>
-                <div class="widget-container tall" id="chart-heatmap"></div>
+                <div class="card-header">
+                    S&amp;P 500 Heatmap (by GICS Sector)
+                    <a href="https://www.bloomberg.com/markets/sectors" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-heatmap" style="height:600px"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SPX Index members &bull; sized by market cap &bull; colored by 1-day % change)</div>
+            </div>
+
+            <div class="card full-width">
+                <div class="card-header">
+                    Global Equity Index Valuations
+                    <a href="https://www.bloomberg.com/markets/stocks" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="valuation-table-wrap" id="equity-valuations-table">
+                    <div class="chart-loading"><div class="spinner"></div>Loading data&hellip;</div>
+                </div>
+                <div class="chart-source">Source: Bloomberg Terminal (PE_RATIO, BEST_PE_RATIO, BEST_PE_NXT_YR, EQY_DVD_YLD_IND, CHG_PCT_YTD)</div>
             </div>
 
         </div>
@@ -333,10 +857,65 @@
 
             <div class="card full-width">
                 <div class="card-header">
-                    Fed Funds Futures
-                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg Rates &rarr;</a>
+                    Fed Funds Implied Forward Curve
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg WIRP &rarr;</a>
                 </div>
-                <div class="widget-container tall" id="chart-ff-curve"></div>
+                <div class="plotly-chart" id="plotly-ff-curve" style="height:350px"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (FF1&ndash;FF24 Comdty &bull; Implied Rate = 100 &minus; Price)</div>
+            </div>
+
+            <div class="card full-width">
+                <div class="card-header">
+                    US Treasury Yield Curve
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ust-curve" style="height:350px"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USGG 1M&ndash;30Y &bull; Current Yields)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    US 10Y Treasury Yield
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ust-10y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USGG10YR Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    UK 10Y Gilt Yield
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ukg-10y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GUKG10 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Italy 10Y BTP Yield
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ita-10y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GBTPGR10 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Germany 10Y Bund Yield
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-ger-10y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GDBR10 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Japan 10Y JGB Yield
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-jpn-10y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GJGB10 Index)</div>
             </div>
 
             <div class="card">
@@ -344,12 +923,44 @@
                     2s10s Treasury Yield Spread
                     <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-chart">
-                    <a href="https://fred.stlouisfed.org/series/T10Y2Y" target="_blank" rel="noopener">
-                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=T10Y2Y&scale=left&cosd=2020-01-01&line_color=%234a9eff&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Daily&fam=avg" alt="10-Year minus 2-Year Treasury Spread" loading="lazy">
-                    </a>
+                <div class="plotly-chart" id="plotly-2s10s"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USYC2Y10 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    US 5Y Real Yield (TIPS)
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/T10Y2Y" target="_blank">FRED</a></div>
+                <div class="plotly-chart" id="plotly-real-5y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USGGT05Y Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    US 10Y Real Yield (TIPS)
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-real-10y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USGGT10Y Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    5Y Inflation Breakeven Rate (TIPS)
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-breakeven-5y"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USGGBE05 Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    MOVE Index
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-move"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (MOVE Index)</div>
             </div>
 
             <div class="card">
@@ -357,12 +968,8 @@
                     Investment Grade Credit Spreads (OAS)
                     <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-chart">
-                    <a href="https://fred.stlouisfed.org/series/BAMLC0A0CM" target="_blank" rel="noopener">
-                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=BAMLC0A0CM&scale=left&cosd=2020-01-01&line_color=%2300bcd4&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Daily&fam=avg" alt="ICE BofA US Corporate Master OAS" loading="lazy">
-                    </a>
-                </div>
-                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/BAMLC0A0CM" target="_blank">FRED &mdash; ICE BofA US Corporate Index OAS</a></div>
+                <div class="plotly-chart" id="plotly-ig"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (LF98OAS Index)</div>
             </div>
 
             <div class="card">
@@ -370,12 +977,62 @@
                     High Yield Credit Spreads (OAS)
                     <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-chart">
-                    <a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2" target="_blank" rel="noopener">
-                        <img src="https://fred.stlouisfed.org/graph/fredgraph.png?bgcolor=%231a1d29&chart_type=line&drp=0&fo=open+sans&graph_bgcolor=%231a1d29&height=400&mode=fred&recession_bars=on&txtcolor=%23aab0c0&ts=12&tts=14&width=880&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&id=BAMLH0A0HYM2&scale=left&cosd=2020-01-01&line_color=%23ff9800&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&fq=Daily&fam=avg" alt="ICE BofA US High Yield Master II OAS" loading="lazy">
-                    </a>
+                <div class="plotly-chart" id="plotly-hy"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (LP01OAS Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Muni Bond Fund Flows
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
                 </div>
-                <div class="fred-source">Source: <a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2" target="_blank">FRED &mdash; ICE BofA US High Yield Index OAS</a></div>
+                <div class="plotly-chart" id="plotly-muni"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NMCMFUS Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Bloomberg US Aggregate Bond
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-agg"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (LUACTRUU Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    US HY Yield to Worst
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-hy-ytw"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (LF98YW Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    CDX IG 5Y CDS
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-cdx-ig"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CDX IG CDSI GEN 5Y Corp)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    CDX HY 5Y CDS
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-cdx-hy"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CDX HY CDSI GEN 5Y Corp)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    iTraxx Europe 5Y CDS
+                    <a href="https://www.bloomberg.com/markets/rates-bonds" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-itrx-eur"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (ITRX EUR CDSI GEN 5Y Corp)</div>
             </div>
 
         </div>
@@ -385,19 +1042,220 @@
     <div id="page-commodities" class="page">
         <div class="dashboard">
 
-            <div class="card">
-                <div class="card-header">WTI Crude Oil</div>
-                <div class="widget-container" id="chart-wti"></div>
+            <div class="card full-width">
+                <div class="card-header">
+                    WTI Crude Oil Forward Curve
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-wti-curve" style="height:350px"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CL1&ndash;CL24 Comdty &bull; $/bbl)</div>
+            </div>
+
+            <div class="card full-width">
+                <div class="card-header">
+                    Brent Crude Oil Forward Curve
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-brent-curve" style="height:350px"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CO1&ndash;CO24 Comdty &bull; $/bbl)</div>
+            </div>
+
+            <div class="card full-width">
+                <div class="card-header">
+                    Henry Hub Natural Gas Forward Curve
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-natgas-curve" style="height:350px"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NG1&ndash;NG24 Comdty &bull; $/MMBtu)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">Brent Crude Oil</div>
-                <div class="widget-container" id="chart-brent"></div>
+                <div class="card-header">
+                    WTI Crude Oil
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-wti"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CL1 Comdty)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">Henry Hub Natural Gas</div>
-                <div class="widget-container" id="chart-natgas"></div>
+                <div class="card-header">
+                    Brent Crude Oil
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-brent"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CO1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Henry Hub Natural Gas
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-natgas"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NG1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    RBOB Gasoline
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-rbob"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (XB1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Heating Oil
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-heating-oil"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (HO1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    LNG Europe (TTF)
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-lng-eu"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (TTFG1MON Index)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    LNG Asia (JKM)
+                    <a href="https://www.bloomberg.com/energy" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-lng-asia"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (JGLA Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Copper
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-copper"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (HG1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Aluminum
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-aluminum"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (LA1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Steel (HRC)
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-steel"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (HRCA Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Nickel
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-nickel"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (LN1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Iron Ore
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-iron-ore"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SCO1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Gold
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-gold"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GC1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Silver
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-silver"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SI1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Corn
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-corn"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (C 1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Wheat
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-wheat"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (W 1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Soybeans
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-soybeans"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (S 1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Coffee
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-coffee"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (KC1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Cotton
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-cotton"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CT1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Sugar
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-sugar"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (SB1 Comdty)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Cocoa
+                    <a href="https://www.bloomberg.com/markets/commodities" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-cocoa"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (CC1 Comdty)</div>
             </div>
 
         </div>
@@ -408,242 +1266,1265 @@
         <div class="dashboard">
 
             <div class="card">
-                <div class="card-header">EUR / USD</div>
-                <div class="widget-container" id="chart-eurusd"></div>
+                <div class="card-header">
+                    US Dollar Index (DXY)
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-dxy"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (DXY Curncy)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">GBP / USD</div>
-                <div class="widget-container" id="chart-gbpusd"></div>
+                <div class="card-header">
+                    EUR / USD
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-eurusd"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (EURUSD Curncy)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">USD / JPY</div>
-                <div class="widget-container" id="chart-usdjpy"></div>
+                <div class="card-header">
+                    GBP / USD
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-gbpusd"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (GBPUSD Curncy)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">USD / CHF</div>
-                <div class="widget-container" id="chart-usdchf"></div>
+                <div class="card-header">
+                    USD / JPY
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-usdjpy"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USDJPY Curncy)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">AUD / USD</div>
-                <div class="widget-container" id="chart-audusd"></div>
+                <div class="card-header">
+                    USD / CHF
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-usdchf"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USDCHF Curncy)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">USD / CAD</div>
-                <div class="widget-container" id="chart-usdcad"></div>
+                <div class="card-header">
+                    AUD / USD
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-audusd"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (AUDUSD Curncy)</div>
             </div>
 
             <div class="card">
-                <div class="card-header">NZD / USD</div>
-                <div class="widget-container" id="chart-nzdusd"></div>
+                <div class="card-header">
+                    USD / CAD
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-usdcad"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (USDCAD Curncy)</div>
             </div>
 
-            <div class="card full-width">
-                <div class="card-header">Forex Cross Rates</div>
-                <div class="widget-container" id="chart-fx-cross"></div>
+            <div class="card">
+                <div class="card-header">
+                    NZD / USD
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-nzdusd"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (NZDUSD Curncy)</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Bitcoin / USD
+                    <a href="https://www.bloomberg.com/currencies" target="_blank" rel="noopener">Bloomberg &rarr;</a>
+                </div>
+                <div class="plotly-chart" id="plotly-btcusd"></div>
+                <div class="chart-source">Source: Bloomberg Terminal (XBTUSD Curncy)</div>
             </div>
 
         </div>
     </div>
 
     <div class="updated-note">
-        Market data powered by TradingView &bull; Economic data from FRED (Federal Reserve Bank of St. Louis)
+        Data from Bloomberg Terminal
     </div>
 
     <script>
-    // ── TradingView chart configuration (market instruments only) ────
-    var tvCharts = {
-        // Equities
-        'chart-spx':        { symbol: 'FOREXCOM:SPXUSD' },
-        'chart-ndx':        { symbol: 'FOREXCOM:NSXUSD' },
-        'chart-ftse':       { symbol: 'TVC:UKX' },
-        'chart-eurostoxx':  { symbol: 'TVC:SX5E' },
-        'chart-topix':      { symbol: 'TVC:TOPX' },
-        // Commodities
-        'chart-wti':    { symbol: 'NYMEX:CL1!' },
-        'chart-brent':  { symbol: 'NYMEX:BZ1!' },
-        'chart-natgas': { symbol: 'NYMEX:NG1!' },
-        // Currencies
-        'chart-eurusd': { symbol: 'FX:EURUSD' },
-        'chart-gbpusd': { symbol: 'FX:GBPUSD' },
-        'chart-usdjpy': { symbol: 'FX:USDJPY' },
-        'chart-usdchf': { symbol: 'FX:USDCHF' },
-        'chart-audusd': { symbol: 'FX:AUDUSD' },
-        'chart-usdcad': { symbol: 'FX:USDCAD' },
-        'chart-nzdusd': { symbol: 'FX:NZDUSD' }
+    // ── Plotly chart definitions (lazy-loaded per page) ──────────────
+    // Keys match the "key" field in data/bloomberg.json (generated by refresh_data.py)
+    var plotlyChartDefs = {
+        'economic': [
+            { id: 'plotly-nfp',            key: 'nfp',             color: '#4a9eff',  unit: 'K jobs' },
+            { id: 'plotly-unrate',         key: 'unrate',          color: '#ab47bc', autorange: true, unit: '%' },
+            { id: 'plotly-core-cpi',       key: 'core_cpi',        color: '#ff9800', autorange: true, unit: '%' },
+            { id: 'plotly-core-pce',       key: 'core_pce',        color: '#e91e63', autorange: true, unit: '%' },
+            { id: 'plotly-gdp',            key: 'gdp',             color: '#4caf50',  unit: '%' },
+            { id: 'plotly-gdpnow',         key: 'gdpnow',          color: '#00897b', autorange: true, unit: '%' },
+            { id: 'plotly-ism-mfg',        key: 'ism_mfg',         color: '#9c27b0', autorange: true, unit: '' },
+            { id: 'plotly-ism-svc',        key: 'ism_svc',         color: '#00bcd4', autorange: true, unit: '' },
+            { id: 'plotly-retail-sales',   key: 'retail_sales',    color: '#ff5722',  unit: '%' },
+            { id: 'plotly-umich',          key: 'umich',           color: '#607d8b', autorange: true, unit: '' },
+            { id: 'plotly-core-ppi',       key: 'core_ppi',        color: '#795548', autorange: true, unit: '%' },
+            { id: 'plotly-adp',            key: 'adp',             color: '#3f51b5',  unit: 'K jobs' },
+            { id: 'plotly-claims',         key: 'claims',          color: '#f44336',  unit: 'K' },
+            { id: 'plotly-durable-goods',  key: 'durable_goods',   color: '#009688',  unit: '%' },
+            { id: 'plotly-housing-starts', key: 'housing_starts',  color: '#8bc34a', autorange: true, unit: 'K' },
+            { id: 'plotly-existing-homes', key: 'existing_homes',  color: '#00bcd4', autorange: true, unit: 'M' },
+            { id: 'plotly-industrial-prod',key: 'industrial_prod', color: '#ff9800',  unit: '%' },
+            { id: 'plotly-personal-income',key: 'personal_income', color: '#e91e63',  unit: '%' },
+            { id: 'plotly-eci',            key: 'eci',             color: '#9c27b0', autorange: true, unit: '%' },
+            { id: 'plotly-consumer-conf',  key: 'consumer_conf',   color: '#4caf50', autorange: true, unit: '' },
+            { id: 'plotly-trade-balance',  key: 'trade_balance',   color: '#ff5722',  unit: '$B' },
+            { id: 'plotly-nfib',           key: 'nfib',            color: '#607d8b', autorange: true, unit: '' },
+            { id: 'plotly-vix',            key: 'vix',             color: '#f44336', autorange: true, unit: '' },
+            { id: 'plotly-cfnai',          key: 'cfnai',           color: '#5c6bc0', autorange: true, unit: '' },
+            { id: 'plotly-nfci',           key: 'nfci',            color: '#26a69a', autorange: true, unit: '' },
+            { id: 'plotly-gsfci',          key: 'gsfci',           color: '#ffa726', autorange: true, unit: '' },
+            { id: 'plotly-bfcius',         key: 'bfcius',          color: '#42a5f5', autorange: true, unit: '' }
+        ],
+        'equities': [
+            { id: 'plotly-spx',       key: 'spx',        color: '#4a9eff', autorange: true, unit: 'pts' },
+            { id: 'plotly-ndx',       key: 'ndx',        color: '#00bcd4', autorange: true, unit: 'pts' },
+            { id: 'plotly-djia',      key: 'djia',       color: '#ff9800', autorange: true, unit: 'pts' },
+            { id: 'plotly-tsx',       key: 'tsx',         color: '#e91e63', autorange: true, unit: 'pts' },
+            { id: 'plotly-eurostoxx', key: 'eurostoxx',  color: '#4caf50', autorange: true, unit: 'pts' },
+            { id: 'plotly-dax',       key: 'dax',        color: '#9c27b0', autorange: true, unit: 'pts' },
+            { id: 'plotly-ftse',      key: 'ftse',       color: '#ff5722', autorange: true, unit: 'pts' },
+            { id: 'plotly-cac',       key: 'cac',        color: '#cddc39', autorange: true, unit: 'pts' },
+            { id: 'plotly-ibex',      key: 'ibex',       color: '#ff7043', autorange: true, unit: 'pts' },
+            { id: 'plotly-ftsemib',   key: 'ftsemib',    color: '#26a69a', autorange: true, unit: 'pts' },
+            { id: 'plotly-nikkei',    key: 'nikkei',     color: '#607d8b', autorange: true, unit: 'pts' },
+            { id: 'plotly-kospi',     key: 'kospi',      color: '#795548', autorange: true, unit: 'pts' },
+            { id: 'plotly-taiex',     key: 'taiex',      color: '#00bcd4', autorange: true, unit: 'pts' },
+            { id: 'plotly-csi300',    key: 'csi300',     color: '#ef5350', autorange: true, unit: 'pts' },
+            { id: 'plotly-hsi',       key: 'hsi',        color: '#f44336', autorange: true, unit: 'pts' },
+            { id: 'plotly-asx200',    key: 'asx200',     color: '#42a5f5', autorange: true, unit: 'pts' },
+            { id: 'plotly-ibov',      key: 'ibov',       color: '#8bc34a', autorange: true, unit: 'pts' },
+            { id: 'plotly-mexbol',    key: 'mexbol',     color: '#ff9800', autorange: true, unit: 'pts' },
+            { id: 'plotly-acwi',      key: 'acwi',       color: '#3f51b5', autorange: true, unit: 'pts' },
+            { id: 'plotly-em',        key: 'em',         color: '#009688', autorange: true, unit: 'pts' },
+            { id: 'plotly-nyad',      key: 'nyad',       color: '#5c6bc0', autorange: true, unit: '' },
+            { id: 'plotly-spx-above200', key: 'spx_above200', color: '#66bb6a', autorange: true, unit: '%' },
+            { id: 'plotly-highs-lows', key: 'highs_lows', color: '#ef5350', autorange: true, unit: '' }
+        ],
+        'fixed-income': [
+            // FF forward curve rendered separately via renderFFCurve()
+            { id: 'plotly-ust-10y', key: 'ust_10y',      color: '#4a9eff', autorange: true, unit: '%' },
+            { id: 'plotly-ukg-10y', key: 'ukg_10y',      color: '#ff9800', autorange: true, unit: '%' },
+            { id: 'plotly-ita-10y', key: 'ita_10y',       color: '#e91e63', autorange: true, unit: '%' },
+            { id: 'plotly-ger-10y', key: 'ger_10y',       color: '#4caf50', autorange: true, unit: '%' },
+            { id: 'plotly-jpn-10y', key: 'jpn_10y',       color: '#9c27b0', autorange: true, unit: '%' },
+            { id: 'plotly-2s10s',   key: 'spread_2s10s',  color: '#4a9eff', autorange: true, unit: 'bps' },
+            { id: 'plotly-real-5y',  key: 'real_5y',       color: '#8bc34a', autorange: true, unit: '%' },
+            { id: 'plotly-real-10y', key: 'real_10y',     color: '#cddc39', autorange: true, unit: '%' },
+            { id: 'plotly-breakeven-5y', key: 'breakeven_5y', color: '#ff5722', autorange: true, unit: '%' },
+            { id: 'plotly-move',    key: 'move',          color: '#ab47bc', autorange: true, unit: '' },
+            { id: 'plotly-ig',      key: 'ig_oas',        color: '#00bcd4', autorange: true, unit: 'bps' },
+            { id: 'plotly-hy',      key: 'hy_oas',        color: '#ff9800', autorange: true, unit: 'bps' },
+            { id: 'plotly-muni',    key: 'muni',           color: '#7e57c2', autorange: true, unit: '$M' },
+            { id: 'plotly-agg',     key: 'agg',            color: '#66bb6a', autorange: true, unit: '' },
+            { id: 'plotly-hy-ytw',  key: 'hy_ytw',         color: '#ffa726', autorange: true, unit: '%' },
+            { id: 'plotly-cdx-ig',  key: 'cdx_ig',        color: '#26a69a', autorange: true, unit: 'bps' },
+            { id: 'plotly-cdx-hy',  key: 'cdx_hy',        color: '#ef5350', autorange: true, unit: 'bps' },
+            { id: 'plotly-itrx-eur',key: 'itrx_eur',      color: '#5c6bc0', autorange: true, unit: 'bps' }
+        ],
+        'commodities': [
+            { id: 'plotly-wti',      key: 'wti',      color: '#4a9eff', autorange: true, unit: '$/bbl' },
+            { id: 'plotly-brent',    key: 'brent',    color: '#ff9800', autorange: true, unit: '$/bbl' },
+            { id: 'plotly-natgas',   key: 'natgas',   color: '#4caf50', autorange: true, unit: '$/MMBtu' },
+            { id: 'plotly-rbob',     key: 'rbob',     color: '#ff7043', autorange: true, unit: 'c/gal' },
+            { id: 'plotly-heating-oil', key: 'heating_oil', color: '#8d6e63', autorange: true, unit: 'c/gal' },
+            { id: 'plotly-lng-eu',   key: 'lng_eu',   color: '#00bcd4', autorange: true, unit: '$/MWh' },
+            { id: 'plotly-lng-asia', key: 'lng_asia', color: '#9c27b0', autorange: true, unit: '$/MMBtu' },
+            { id: 'plotly-copper',   key: 'copper',   color: '#e91e63', autorange: true, unit: '$/lb' },
+            { id: 'plotly-aluminum', key: 'aluminum', color: '#9c27b0', autorange: true, unit: '$/MT' },
+            { id: 'plotly-steel',    key: 'steel',    color: '#607d8b', autorange: true, unit: '$/MT' },
+            { id: 'plotly-nickel',   key: 'nickel',   color: '#795548', autorange: true, unit: '$/MT' },
+            { id: 'plotly-iron-ore', key: 'iron_ore', color: '#d84315', autorange: true, unit: '$/MT' },
+            { id: 'plotly-gold',     key: 'gold',     color: '#ffd700', autorange: true, unit: '$/oz' },
+            { id: 'plotly-silver',   key: 'silver',   color: '#b0bec5', autorange: true, unit: '$/oz' },
+            { id: 'plotly-corn',     key: 'corn',     color: '#ffeb3b', autorange: true, unit: 'c/bu' },
+            { id: 'plotly-wheat',    key: 'wheat',    color: '#ff9800', autorange: true, unit: 'c/bu' },
+            { id: 'plotly-soybeans', key: 'soybeans', color: '#8bc34a', autorange: true, unit: 'c/bu' },
+            { id: 'plotly-coffee',   key: 'coffee',   color: '#6d4c41', autorange: true, unit: 'c/lb' },
+            { id: 'plotly-cotton',   key: 'cotton',   color: '#b0bec5', autorange: true, unit: 'c/lb' },
+            { id: 'plotly-sugar',    key: 'sugar',    color: '#e0e0e0', autorange: true, unit: 'c/lb' },
+            { id: 'plotly-cocoa',    key: 'cocoa',    color: '#5d4037', autorange: true, unit: '$/MT' }
+        ],
+        'currencies': [
+            { id: 'plotly-dxy',    key: 'dxy',    color: '#78909c', autorange: true, unit: '' },
+            { id: 'plotly-eurusd', key: 'eurusd', color: '#4a9eff', autorange: true, unit: '' },
+            { id: 'plotly-gbpusd', key: 'gbpusd', color: '#00bcd4', autorange: true, unit: '' },
+            { id: 'plotly-usdjpy', key: 'usdjpy', color: '#ff9800', autorange: true, unit: '' },
+            { id: 'plotly-usdchf', key: 'usdchf', color: '#4caf50', autorange: true, unit: '' },
+            { id: 'plotly-audusd', key: 'audusd', color: '#e91e63', autorange: true, unit: '' },
+            { id: 'plotly-usdcad', key: 'usdcad', color: '#9c27b0', autorange: true, unit: '' },
+            { id: 'plotly-nzdusd', key: 'nzdusd', color: '#ff5722', autorange: true, unit: '' },
+            { id: 'plotly-btcusd', key: 'btcusd', color: '#f7931a', autorange: true, unit: '$' }
+        ]
     };
 
-    var initialized = {};
+    var plotlyLoaded = false;
+    var plotlyLoadCallbacks = [];
+    var plotlyInitialized = {};
 
-    function createAdvancedChart(containerId, cfg) {
-        var el = document.getElementById(containerId);
-        if (!el || initialized[containerId]) return;
-        initialized[containerId] = true;
-
-        var wrapper = document.createElement('div');
-        wrapper.className = 'tradingview-widget-container';
-        wrapper.style.cssText = 'height:100%;width:100%';
-        wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+    // ── Lazy-load Plotly.js library on first need ────────────────────
+    function ensurePlotly(cb) {
+        if (plotlyLoaded) { cb(); return; }
+        plotlyLoadCallbacks.push(cb);
+        if (plotlyLoadCallbacks.length > 1) return; // already loading
 
         var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-        script.async = true;
-        script.textContent = JSON.stringify({
-            "symbol": cfg.symbol,
-            "width": "100%",
-            "height": "100%",
-            "colorTheme": "dark",
-            "isTransparent": true,
-            "locale": "en",
-            "dateRange": "12M",
-            "style": "1",
-            "allow_symbol_change": true,
-            "hide_side_toolbar": false,
-            "hide_top_toolbar": false,
-            "withdateranges": true,
-            "support_host": "https://www.tradingview.com"
-        });
-        wrapper.appendChild(script);
-        el.appendChild(wrapper);
+        script.src = 'https://cdn.plot.ly/plotly-2.35.2.min.js';
+        script.onload = function() {
+            plotlyLoaded = true;
+            plotlyLoadCallbacks.forEach(function(fn) { fn(); });
+            plotlyLoadCallbacks = [];
+        };
+        script.onerror = function() {
+            plotlyLoadCallbacks.forEach(function(fn) { fn(new Error('Failed to load Plotly')); });
+            plotlyLoadCallbacks = [];
+        };
+        document.head.appendChild(script);
     }
 
-    function createHeatmap(containerId) {
+    // ── Show loading spinner in chart container ──────────────────────
+    function showLoading(containerId) {
         var el = document.getElementById(containerId);
-        if (!el || initialized[containerId]) return;
-        initialized[containerId] = true;
-
-        var wrapper = document.createElement('div');
-        wrapper.className = 'tradingview-widget-container';
-        wrapper.style.cssText = 'height:100%;width:100%';
-        wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
-
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js';
-        script.async = true;
-        script.textContent = JSON.stringify({
-            "exchanges": [],
-            "dataSource": "SPX500",
-            "grouping": "sector",
-            "blockSize": "market_cap_basic",
-            "blockColor": "change",
-            "locale": "en",
-            "colorTheme": "dark",
-            "hasTopBar": true,
-            "isDataSetEnabled": true,
-            "isZoomEnabled": true,
-            "hasSymbolTooltip": true,
-            "isTransparent": true,
-            "width": "100%",
-            "height": "100%"
-        });
-        wrapper.appendChild(script);
-        el.appendChild(wrapper);
+        if (!el) return;
+        el.innerHTML = '<div class="chart-loading"><div class="spinner"></div>Loading data&hellip;</div>';
     }
 
-    function createFedFundsCurve(containerId) {
+    function showError(containerId, msg, retryFn) {
         var el = document.getElementById(containerId);
-        if (!el || initialized[containerId]) return;
-        initialized[containerId] = true;
-
-        var wrapper = document.createElement('div');
-        wrapper.className = 'tradingview-widget-container';
-        wrapper.style.cssText = 'height:100%;width:100%';
-        wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
-
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-        script.async = true;
-        script.textContent = JSON.stringify({
-            "symbol": "CBOT:ZQ1!",
-            "width": "100%",
-            "height": "100%",
-            "colorTheme": "dark",
-            "isTransparent": true,
-            "locale": "en",
-            "dateRange": "12M",
-            "style": "1",
-            "allow_symbol_change": true,
-            "hide_side_toolbar": false,
-            "hide_top_toolbar": false,
-            "withdateranges": true,
-            "compareSymbols": [
-                {"symbol": "CBOT:ZQ2!", "lineColor": "#ff9800"},
-                {"symbol": "CBOT:ZQ3!", "lineColor": "#4caf50"},
-                {"symbol": "CBOT:ZQ4!", "lineColor": "#e91e63"},
-                {"symbol": "CBOT:ZQ5!", "lineColor": "#9c27b0"},
-                {"symbol": "CBOT:ZQ6!", "lineColor": "#00bcd4"}
-            ],
-            "support_host": "https://www.tradingview.com"
-        });
-        wrapper.appendChild(script);
-        el.appendChild(wrapper);
+        if (!el) return;
+        el.innerHTML = '';
+        var div = document.createElement('div');
+        div.className = 'chart-error';
+        div.innerHTML = '<span>' + msg + '</span>';
+        if (retryFn) {
+            var btn = document.createElement('button');
+            btn.textContent = 'Retry';
+            btn.onclick = retryFn;
+            div.appendChild(btn);
+        }
+        el.appendChild(div);
     }
 
-    function createForexCrossRates(containerId) {
-        var el = document.getElementById(containerId);
-        if (!el || initialized[containerId]) return;
-        initialized[containerId] = true;
+    // ── Load Bloomberg data (generated by refresh_data.py) ──────────
+    var bloombergData = null;
 
-        var wrapper = document.createElement('div');
-        wrapper.className = 'tradingview-widget-container';
-        wrapper.style.cssText = 'height:100%;width:100%';
-        wrapper.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+    function loadBloombergData() {
+        if (bloombergData) return Promise.resolve(bloombergData);
 
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js';
-        script.async = true;
-        script.textContent = JSON.stringify({
-            "currencies": ["EUR","USD","JPY","GBP","CHF","AUD","CAD","NZD"],
-            "isTransparent": true,
-            "colorTheme": "dark",
-            "width": "100%",
-            "height": "100%",
-            "locale": "en"
+        // Check if data was loaded via <script> tag (file:// mode fallback)
+        if (window.BLOOMBERG_DATA) {
+            bloombergData = window.BLOOMBERG_DATA;
+            return Promise.resolve(bloombergData);
+        }
+
+        // HTTP mode: fetch JSON file
+        return fetch('data/bloomberg.json?t=' + Date.now())
+            .then(function(resp) {
+                if (!resp.ok) throw new Error('Run refresh_data.py first to generate data');
+                return resp.json();
+            })
+            .then(function(data) {
+                bloombergData = data;
+                // Show last-refreshed timestamp in footer
+                var note = document.querySelector('.updated-note');
+                if (note && data.generated_at) {
+                    note.innerHTML = 'Data from Bloomberg Terminal'
+                        + ' &bull; Last refreshed: ' + data.generated_at;
+                }
+                return data;
+            });
+    }
+
+    function getSeriesData(key) {
+        return loadBloombergData().then(function(data) {
+            var s = data.series[key];
+            if (!s) throw new Error('Series "' + key + '" not found — re-run refresh_data.py');
+            return { dates: s.dates, values: s.values };
         });
-        wrapper.appendChild(script);
-        el.appendChild(wrapper);
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────
+    function hexToRgba(hex, alpha) {
+        var r = parseInt(hex.slice(1,3), 16);
+        var g = parseInt(hex.slice(3,5), 16);
+        var b = parseInt(hex.slice(5,7), 16);
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+
+    // ── Update card header with latest value ──────────────────────────
+    function updateCardHeaderValue(containerId, values, unit) {
+        var chartEl = document.getElementById(containerId);
+        if (!chartEl) return;
+        var card = chartEl.closest('.card');
+        if (!card) return;
+        var header = card.querySelector('.card-header');
+        if (!header) return;
+        // Remove any existing latest-value span
+        var existing = header.querySelector('.latest-value');
+        if (existing) existing.remove();
+        // Get last non-null value
+        var lastVal = null;
+        for (var i = values.length - 1; i >= 0; i--) {
+            if (values[i] != null) { lastVal = values[i]; break; }
+        }
+        if (lastVal == null) return;
+        // Format the number
+        var formatted;
+        if (Math.abs(lastVal) >= 1000) {
+            formatted = lastVal.toLocaleString('en-US', { maximumFractionDigits: 0 });
+        } else if (Number.isInteger(lastVal) || Math.abs(lastVal) >= 100) {
+            formatted = lastVal.toLocaleString('en-US', { maximumFractionDigits: 1 });
+        } else {
+            formatted = lastVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        var text = unit ? formatted + ' ' + unit : formatted;
+        var span = document.createElement('span');
+        span.className = 'latest-value';
+        span.textContent = '(' + text + ')';
+        // Insert after the first text node (title), before the link
+        var link = header.querySelector('a');
+        if (link) {
+            header.insertBefore(span, link);
+        } else {
+            header.appendChild(span);
+        }
+    }
+
+    // ── Render a Plotly line chart with dark theme ────────────────────
+    // traces: array of { dates, values, color, label? }
+    // opts: { autorange: bool }
+    function renderPlotlyChart(containerId, traces, opts) {
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        el.innerHTML = '';
+        opts = opts || {};
+
+        // Determine y-axis tick format based on data range
+        var allVals = [];
+        traces.forEach(function(t) {
+            if (t.values) allVals = allVals.concat(t.values);
+        });
+        var yMin = Math.min.apply(null, allVals);
+        var yMax = Math.max.apply(null, allVals);
+        var yRange = yMax - yMin;
+        // Estimate Plotly's auto tick step (~5 ticks across the range)
+        var approxStep = yRange / 5;
+        var yTickFormat = approxStep >= 1 ? ',d' : ',.1f';
+
+        var plotTraces = traces.map(function(t, i) {
+            var hoverFmt = approxStep >= 1 ? '%{x|%b %d, %Y}<br><b>%{y:,d}</b><extra></extra>'
+                                           : '%{x|%b %d, %Y}<br><b>%{y:,.2f}</b><extra></extra>';
+            var tr = {
+                x: t.dates,
+                y: t.values,
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: t.color, width: 2 },
+                hovertemplate: hoverFmt
+            };
+            if (t.label) tr.name = t.label;
+            // Only add fill for single-trace charts without autorange
+            if (traces.length === 1 && !opts.autorange) {
+                tr.fill = 'tozeroy';
+                tr.fillcolor = hexToRgba(t.color, 0.07);
+            }
+            return tr;
+        });
+
+        var layout = {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#8b8fa3', family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 11 },
+            margin: { t: 8, r: 16, b: 36, l: 56 },
+            xaxis: {
+                gridcolor: 'rgba(42,46,61,0.5)',
+                linecolor: '#2a2e3d',
+                tickformat: '%b %Y',
+                tickfont: { size: 10 },
+                showgrid: true,
+                zeroline: false
+            },
+            yaxis: {
+                gridcolor: 'rgba(42,46,61,0.5)',
+                linecolor: '#2a2e3d',
+                tickfont: { size: 10 },
+                tickformat: yTickFormat,
+                showgrid: true,
+                zeroline: !opts.autorange,
+                zerolinecolor: '#3a3e4d',
+                zerolinewidth: 1,
+                autorange: true,
+                rangemode: opts.autorange ? 'normal' : 'tozero'
+            },
+            hovermode: 'x unified',
+            hoverlabel: {
+                bgcolor: '#1a1d29',
+                bordercolor: '#2a2e3d',
+                font: { color: '#e1e4ea', size: 12 }
+            },
+            dragmode: 'zoom',
+            showlegend: traces.length > 1,
+            legend: {
+                font: { color: '#8b8fa3', size: 10 },
+                bgcolor: 'rgba(0,0,0,0)',
+                orientation: 'h',
+                x: 0, y: 1.12
+            }
+        };
+
+        var config = {
+            responsive: true,
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['lasso2d', 'select2d', 'sendDataToCloud', 'toggleSpikelines'],
+            displaylogo: false
+        };
+
+        Plotly.newPlot(el, plotTraces, layout, config);
+
+        // Auto-adjust y-axis when zooming on x-axis (all charts)
+        {
+            el.on('plotly_relayout', function(eventData) {
+                if (eventData['xaxis.autorange'] || eventData.autosize) return;
+                var xRange = eventData['xaxis.range[0]'] && eventData['xaxis.range[1]'];
+                var traces = el.data;
+                if (!traces || !traces.length) return;
+
+                if (xRange) {
+                    var x0 = eventData['xaxis.range[0]'];
+                    var x1 = eventData['xaxis.range[1]'];
+                    var yMin = Infinity, yMax = -Infinity;
+                    traces.forEach(function(t) {
+                        if (!t.x || !t.y) return;
+                        for (var i = 0; i < t.x.length; i++) {
+                            if (t.x[i] >= x0 && t.x[i] <= x1 && typeof t.y[i] === 'number') {
+                                if (t.y[i] < yMin) yMin = t.y[i];
+                                if (t.y[i] > yMax) yMax = t.y[i];
+                            }
+                        }
+                    });
+                    if (yMin !== Infinity) {
+                        var pad = (yMax - yMin) * 0.08 || 0.5;
+                        Plotly.relayout(el, {
+                            'yaxis.range': [yMin - pad, yMax + pad],
+                            'yaxis.autorange': false
+                        });
+                    }
+                } else if (eventData['xaxis.autorange']) {
+                    Plotly.relayout(el, { 'yaxis.autorange': true });
+                }
+            });
+
+            // Also handle double-click reset
+            el.on('plotly_doubleclick', function() {
+                setTimeout(function() {
+                    Plotly.relayout(el, { 'yaxis.autorange': true });
+                }, 50);
+            });
+        }
+    }
+
+    // ── Initialize Plotly charts for a page (lazy) ───────────────────
+    function initPlotlyCharts(pageId) {
+        var defs = plotlyChartDefs[pageId];
+        if (!defs) return;
+
+        defs.forEach(function(def) {
+            if (plotlyInitialized[def.id]) return;
+            plotlyInitialized[def.id] = true;
+
+            showLoading(def.id);
+
+            ensurePlotly(function(err) {
+                if (err) {
+                    showError(def.id, 'Failed to load charting library', function() {
+                        plotlyInitialized[def.id] = false;
+                        initPlotlyCharts(pageId);
+                    });
+                    return;
+                }
+
+                var opts = { autorange: !!def.autorange };
+
+                if (def.multi) {
+                    // Multi-series chart (e.g. Fed Funds Futures)
+                    Promise.all(def.multi.map(function(s) {
+                        return getSeriesData(s.key).then(function(data) {
+                            return { dates: data.dates, values: data.values, color: s.color, label: s.label };
+                        });
+                    }))
+                    .then(function(traces) {
+                        renderPlotlyChart(def.id, traces, opts);
+                        if (traces.length > 0 && def.unit != null) {
+                            updateCardHeaderValue(def.id, traces[0].values, def.unit);
+                        }
+                    })
+                    .catch(function(fetchErr) {
+                        showError(def.id, 'Failed to load data: ' + fetchErr.message, function() {
+                            plotlyInitialized[def.id] = false;
+                            initPlotlyCharts(pageId);
+                        });
+                    });
+                } else {
+                    // Single-series chart
+                    getSeriesData(def.key)
+                        .then(function(data) {
+                            renderPlotlyChart(def.id, [{ dates: data.dates, values: data.values, color: def.color }], opts);
+                            if (def.unit != null) {
+                                updateCardHeaderValue(def.id, data.values, def.unit);
+                            }
+                        })
+                        .catch(function(fetchErr) {
+                            showError(def.id, 'Failed to load data: ' + fetchErr.message, function() {
+                                plotlyInitialized[def.id] = false;
+                                initPlotlyCharts(pageId);
+                            });
+                        });
+                }
+            });
+        });
+    }
+
+    // ── Fed Funds Forward Curve (from FF1–FF24 BDP snapshot) ────────
+    var ffCurveRendered = false;
+
+    function renderFFCurve(containerId) {
+        if (ffCurveRendered) return;
+        ffCurveRendered = true;
+
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        showLoading(containerId);
+
+        ensurePlotly(function(err) {
+            if (err) {
+                showError(containerId, 'Failed to load charting library', function() {
+                    ffCurveRendered = false;
+                    renderFFCurve(containerId);
+                });
+                return;
+            }
+
+            loadBloombergData().then(function(data) {
+                var curve = data.ff_curve;
+                if (!curve || curve.length === 0) {
+                    showError(containerId, 'No FF curve data — re-run refresh_data.py');
+                    return;
+                }
+                el.innerHTML = '';
+
+                var dates = curve.map(function(p) { return p.date; });
+                var rates = curve.map(function(p) { return p.rate; });
+
+                // Compute y-axis bounds: lower bound = min rate rounded down to nearest 0.25
+                var minRate = Math.min.apply(null, rates);
+                var maxRate = Math.max.apply(null, rates);
+                var yMin = Math.floor(minRate * 4) / 4 - 0.25;
+                var yMax = Math.ceil(maxRate * 4) / 4 + 0.25;
+
+                // Invisible baseline trace at yMin so fill goes to the lower bound, not zero
+                var baseline = {
+                    x: dates,
+                    y: dates.map(function() { return yMin; }),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: 'rgba(0,0,0,0)', width: 0 },
+                    showlegend: false,
+                    hoverinfo: 'skip'
+                };
+
+                var trace = {
+                    x: dates,
+                    y: rates,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: '#4a9eff', width: 2.5 },
+                    marker: { color: '#4a9eff', size: 6 },
+                    fill: 'tonexty',
+                    fillcolor: 'rgba(74,158,255,0.07)',
+                    hovertemplate: '%{x|%b %Y}<br><b>%{y:.3f}%</b><extra></extra>'
+                };
+
+                var layout = {
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: '#8b8fa3', family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 11 },
+                    margin: { t: 8, r: 16, b: 36, l: 56 },
+                    xaxis: {
+                        gridcolor: 'rgba(42,46,61,0.5)',
+                        linecolor: '#2a2e3d',
+                        tickformat: '%b %Y',
+                        tickfont: { size: 10 },
+                        showgrid: true,
+                        zeroline: false
+                    },
+                    yaxis: {
+                        gridcolor: 'rgba(42,46,61,0.5)',
+                        linecolor: '#2a2e3d',
+                        tickfont: { size: 10 },
+                        tickformat: '.2f',
+                        ticksuffix: '%',
+                        showgrid: true,
+                        zeroline: false,
+                        range: [yMin, yMax],
+                        dtick: 0.25
+                    },
+                    hovermode: 'x unified',
+                    hoverlabel: {
+                        bgcolor: '#1a1d29',
+                        bordercolor: '#2a2e3d',
+                        font: { color: '#e1e4ea', size: 12 }
+                    },
+                    dragmode: 'zoom',
+                    showlegend: false
+                };
+
+                var config = {
+                    responsive: true,
+                    displayModeBar: true,
+                    modeBarButtonsToRemove: ['lasso2d', 'select2d', 'sendDataToCloud', 'toggleSpikelines'],
+                    displaylogo: false
+                };
+
+                Plotly.newPlot(el, [baseline, trace], layout, config);
+            }).catch(function(fetchErr) {
+                showError(containerId, 'Failed to load data: ' + fetchErr.message, function() {
+                    ffCurveRendered = false;
+                    renderFFCurve(containerId);
+                });
+            });
+        });
+    }
+
+    // ── US Treasury Yield Curve ─────────────────────────────────────
+    var ustCurveRendered = false;
+
+    function renderUSTCurve(containerId) {
+        if (ustCurveRendered) return;
+        ustCurveRendered = true;
+
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        showLoading(containerId);
+
+        ensurePlotly(function(err) {
+            if (err) {
+                showError(containerId, 'Failed to load charting library', function() {
+                    ustCurveRendered = false;
+                    renderUSTCurve(containerId);
+                });
+                return;
+            }
+
+            loadBloombergData().then(function(data) {
+                var curve = data.ust_yield_curve;
+                if (!curve || curve.length === 0) {
+                    showError(containerId, 'No yield curve data — re-run refresh_data.py');
+                    return;
+                }
+                el.innerHTML = '';
+
+                var tenors = curve.map(function(p) { return p.tenor; });
+                var yields = curve.map(function(p) { return p['yield']; });
+
+                var minY = Math.min.apply(null, yields);
+                var maxY = Math.max.apply(null, yields);
+                var padding = (maxY - minY) * 0.15 || 0.25;
+                var yMin = minY - padding;
+                var yMax = maxY + padding;
+
+                var baseline = {
+                    x: tenors,
+                    y: tenors.map(function() { return yMin; }),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: 'rgba(0,0,0,0)', width: 0 },
+                    showlegend: false,
+                    hoverinfo: 'skip'
+                };
+
+                var trace = {
+                    x: tenors,
+                    y: yields,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: '#4a9eff', width: 2.5 },
+                    marker: { color: '#4a9eff', size: 7 },
+                    fill: 'tonexty',
+                    fillcolor: 'rgba(74,158,255,0.07)',
+                    hovertemplate: '<b>%{x}</b><br>%{y:.3f}%<extra></extra>'
+                };
+
+                var layout = {
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: '#8b8fa3', family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 11 },
+                    margin: { t: 8, r: 16, b: 36, l: 56 },
+                    xaxis: {
+                        gridcolor: 'rgba(42,46,61,0.5)',
+                        linecolor: '#2a2e3d',
+                        tickfont: { size: 10 },
+                        showgrid: true,
+                        zeroline: false,
+                        type: 'category'
+                    },
+                    yaxis: {
+                        gridcolor: 'rgba(42,46,61,0.5)',
+                        linecolor: '#2a2e3d',
+                        tickfont: { size: 10 },
+                        ticksuffix: '%',
+                        tickformat: '.2f',
+                        showgrid: true,
+                        zeroline: false,
+                        range: [yMin, yMax]
+                    },
+                    hovermode: 'x unified',
+                    hoverlabel: {
+                        bgcolor: '#1a1d29',
+                        bordercolor: '#2a2e3d',
+                        font: { color: '#e1e4ea', size: 12 }
+                    },
+                    dragmode: 'zoom',
+                    showlegend: false
+                };
+
+                var config = {
+                    responsive: true,
+                    displayModeBar: true,
+                    modeBarButtonsToRemove: ['lasso2d', 'select2d', 'sendDataToCloud', 'toggleSpikelines'],
+                    displaylogo: false
+                };
+
+                Plotly.newPlot(el, [baseline, trace], layout, config);
+            }).catch(function(fetchErr) {
+                showError(containerId, 'Failed to load data: ' + fetchErr.message, function() {
+                    ustCurveRendered = false;
+                    renderUSTCurve(containerId);
+                });
+            });
+        });
+    }
+
+    // ── Commodity Forward Curves ───────────────────────────────────
+    var commodityCurveDefs = [
+        { id: 'plotly-wti-curve',    key: 'wti_curve',    color: '#4a9eff', unit: '$/bbl' },
+        { id: 'plotly-brent-curve',  key: 'brent_curve',  color: '#ff9800', unit: '$/bbl' },
+        { id: 'plotly-natgas-curve', key: 'natgas_curve',  color: '#4caf50', unit: '$/MMBtu' }
+    ];
+    var commodityCurvesRendered = {};
+
+    function renderCommodityCurve(def) {
+        if (commodityCurvesRendered[def.id]) return;
+        commodityCurvesRendered[def.id] = true;
+
+        var el = document.getElementById(def.id);
+        if (!el) return;
+        showLoading(def.id);
+
+        ensurePlotly(function(err) {
+            if (err) {
+                showError(def.id, 'Failed to load charting library', function() {
+                    commodityCurvesRendered[def.id] = false;
+                    renderCommodityCurve(def);
+                });
+                return;
+            }
+
+            loadBloombergData().then(function(data) {
+                var curves = data.commodity_curves;
+                if (!curves || !curves[def.key] || curves[def.key].length === 0) {
+                    showError(def.id, 'No forward curve data — re-run refresh_data.py');
+                    return;
+                }
+                el.innerHTML = '';
+
+                var curve = curves[def.key];
+                var dates = curve.map(function(p) { return p.date; });
+                var prices = curve.map(function(p) { return p.price; });
+
+                var minP = Math.min.apply(null, prices);
+                var maxP = Math.max.apply(null, prices);
+                var padding = (maxP - minP) * 0.15 || 1;
+                var yMin = minP - padding;
+                var yMax = maxP + padding;
+
+                var baseline = {
+                    x: dates,
+                    y: dates.map(function() { return yMin; }),
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color: 'rgba(0,0,0,0)', width: 0 },
+                    showlegend: false,
+                    hoverinfo: 'skip'
+                };
+
+                var trace = {
+                    x: dates,
+                    y: prices,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: def.color, width: 2.5 },
+                    marker: { color: def.color, size: 6 },
+                    fill: 'tonexty',
+                    fillcolor: hexToRgba(def.color, 0.07),
+                    hovertemplate: '%{x|%b %Y}<br><b>%{y:,.2f} ' + def.unit + '</b><extra></extra>'
+                };
+
+                var layout = {
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: '#8b8fa3', family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif', size: 11 },
+                    margin: { t: 8, r: 16, b: 36, l: 56 },
+                    xaxis: {
+                        gridcolor: 'rgba(42,46,61,0.5)',
+                        linecolor: '#2a2e3d',
+                        tickformat: '%b %Y',
+                        tickfont: { size: 10 },
+                        showgrid: true,
+                        zeroline: false
+                    },
+                    yaxis: {
+                        gridcolor: 'rgba(42,46,61,0.5)',
+                        linecolor: '#2a2e3d',
+                        tickfont: { size: 10 },
+                        tickformat: ',.2f',
+                        showgrid: true,
+                        zeroline: false,
+                        range: [yMin, yMax]
+                    },
+                    hovermode: 'x unified',
+                    hoverlabel: {
+                        bgcolor: '#1a1d29',
+                        bordercolor: '#2a2e3d',
+                        font: { color: '#e1e4ea', size: 12 }
+                    },
+                    dragmode: 'zoom',
+                    showlegend: false
+                };
+
+                var config = {
+                    responsive: true,
+                    displayModeBar: true,
+                    modeBarButtonsToRemove: ['lasso2d', 'select2d', 'sendDataToCloud', 'toggleSpikelines'],
+                    displaylogo: false
+                };
+
+                Plotly.newPlot(el, [baseline, trace], layout, config);
+            }).catch(function(fetchErr) {
+                showError(def.id, 'Failed to load data: ' + fetchErr.message, function() {
+                    commodityCurvesRendered[def.id] = false;
+                    renderCommodityCurve(def);
+                });
+            });
+        });
+    }
+
+    // ── S&P 500 Heatmap (Plotly treemap from Bloomberg data) ────────
+    var heatmapRendered = false;
+
+    function renderHeatmap(containerId) {
+        if (heatmapRendered) return;
+        heatmapRendered = true;
+
+        var el = document.getElementById(containerId);
+        if (!el) return;
+        showLoading(containerId);
+
+        ensurePlotly(function(err) {
+            if (err) {
+                showError(containerId, 'Failed to load charting library', function() {
+                    heatmapRendered = false;
+                    renderHeatmap(containerId);
+                });
+                return;
+            }
+
+            loadBloombergData().then(function(data) {
+                var stocks = data.heatmap;
+                if (!stocks || stocks.length === 0) {
+                    showError(containerId, 'No heatmap data — re-run refresh_data.py');
+                    return;
+                }
+                el.innerHTML = '';
+
+                // Build treemap arrays: labels, parents, values, colors, customdata
+                // Use sector-prefixed labels to avoid duplicate label issues
+                var labels = ['S&P 500'];
+                var parents = [''];
+                var values = [0];
+                var colors = [0];
+                var customdata = [['', 0, 0]];
+                var textArr = [''];
+
+                // Collect unique sectors (sorted alphabetically) and sum market caps
+                var sectorMap = {};
+                stocks.forEach(function(s) {
+                    if (!sectorMap[s.sector]) sectorMap[s.sector] = 0;
+                    sectorMap[s.sector] += s.mkt_cap;
+                });
+                var sectors = Object.keys(sectorMap).sort();
+
+                // Compute sector-level avg change for coloring
+                var sectorChg = {};
+                var sectorCnt = {};
+                stocks.forEach(function(s) {
+                    if (!sectorChg[s.sector]) { sectorChg[s.sector] = 0; sectorCnt[s.sector] = 0; }
+                    sectorChg[s.sector] += s.chg_pct;
+                    sectorCnt[s.sector] += 1;
+                });
+
+                var totalMktCap = 0;
+                sectors.forEach(function(sec) { totalMktCap += sectorMap[sec]; });
+
+                // Root value = total
+                values[0] = totalMktCap;
+
+                // Add sector nodes
+                sectors.forEach(function(sec) {
+                    labels.push(sec);
+                    parents.push('S&P 500');
+                    values.push(sectorMap[sec]);
+                    var avgChg = sectorChg[sec] / sectorCnt[sec];
+                    colors.push(avgChg);
+                    customdata.push([sec, sectorMap[sec], avgChg]);
+                    textArr.push(sec);
+                });
+
+                // Add stock leaves — prefix ticker with sector to avoid duplicate labels
+                stocks.forEach(function(s) {
+                    labels.push(s.sector + '/' + s.ticker);
+                    parents.push(s.sector);
+                    values.push(s.mkt_cap);
+                    colors.push(s.chg_pct);
+                    customdata.push([s.name, s.mkt_cap, s.chg_pct]);
+                    var sign = s.chg_pct >= 0 ? '+' : '';
+                    textArr.push(s.ticker + '<br>' + sign + s.chg_pct.toFixed(2) + '%');
+                });
+
+                var trace = {
+                    type: 'treemap',
+                    labels: labels,
+                    parents: parents,
+                    values: values,
+                    textinfo: 'text',
+                    text: textArr,
+                    customdata: customdata,
+                    hovertemplate: '<b>%{customdata[0]}</b><br>' +
+                        'Market Cap: $%{customdata[1]:,.0f}M<br>' +
+                        'Change: %{customdata[2]:+.2f}%<extra></extra>',
+                    marker: {
+                        colors: colors,
+                        colorscale: [
+                            [0, '#d32f2f'],
+                            [0.35, '#e57373'],
+                            [0.45, '#555555'],
+                            [0.5, '#444444'],
+                            [0.55, '#555555'],
+                            [0.65, '#66bb6a'],
+                            [1, '#2e7d32']
+                        ],
+                        cmid: 0,
+                        cmin: -3,
+                        cmax: 3,
+                        showscale: true,
+                        colorbar: {
+                            title: { text: '1D Chg %', font: { color: '#8b8fa3', size: 10 } },
+                            tickfont: { color: '#8b8fa3', size: 9 },
+                            ticksuffix: '%',
+                            len: 0.5,
+                            thickness: 12,
+                            outlinewidth: 0
+                        }
+                    },
+                    tiling: { packing: 'squarify' },
+                    pathbar: { visible: true, textfont: { color: '#e1e4ea', size: 11 } },
+                    textfont: { color: '#e1e4ea', size: 11 },
+                    branchvalues: 'total',
+                    maxdepth: 3,
+                    level: 'S&P 500'
+                };
+
+                var layout = {
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: '#8b8fa3', size: 11 },
+                    margin: { t: 28, r: 8, b: 8, l: 8 }
+                };
+
+                var config = {
+                    responsive: true,
+                    displayModeBar: false
+                };
+
+                Plotly.newPlot(el, [trace], layout, config);
+            }).catch(function(fetchErr) {
+                showError(containerId, 'Failed to load heatmap: ' + fetchErr.message, function() {
+                    heatmapRendered = false;
+                    renderHeatmap(containerId);
+                });
+            });
+        });
+    }
+
+    // ── Equity Valuations Table ─────────────────────────────────────
+    var valuationsRendered = false;
+
+    function renderValuationsTable(containerId) {
+        if (valuationsRendered) return;
+        valuationsRendered = true;
+
+        var el = document.getElementById(containerId);
+        if (!el) return;
+
+        loadBloombergData().then(function(data) {
+            var rows = data.equity_valuations;
+            if (!rows || rows.length === 0) {
+                el.innerHTML = '<div style="padding:20px;color:var(--text-muted);text-align:center;">No valuation data — re-run refresh_data.py</div>';
+                return;
+            }
+
+            function fmt(v, decimals) {
+                if (v == null) return '<span class="val-na">—</span>';
+                return v.toFixed(decimals != null ? decimals : 1);
+            }
+
+            function fmtPct(v) {
+                if (v == null) return '<span class="val-na">—</span>';
+                var cls = v > 0 ? 'val-positive' : v < 0 ? 'val-negative' : '';
+                var sign = v > 0 ? '+' : '';
+                return '<span class="' + cls + '">' + sign + v.toFixed(2) + '%</span>';
+            }
+
+            var html = '<table class="valuation-table">';
+            html += '<thead><tr>';
+            html += '<th>Index</th>';
+            html += '<th>P/E</th>';
+            html += '<th>Est FY1 P/E</th>';
+            html += '<th>Est FY2 P/E</th>';
+            html += '<th>Div Yield</th>';
+            html += '<th>% YTD</th>';
+            html += '</tr></thead><tbody>';
+
+            rows.forEach(function(r) {
+                html += '<tr>';
+                html += '<td>' + r.label + '</td>';
+                html += '<td>' + (r.pe != null ? fmt(r.pe, 1) + 'x' : '<span class="val-na">—</span>') + '</td>';
+                html += '<td>' + (r.pe_fy1 != null ? fmt(r.pe_fy1, 1) + 'x' : '<span class="val-na">—</span>') + '</td>';
+                html += '<td>' + (r.pe_fy2 != null ? fmt(r.pe_fy2, 1) + 'x' : '<span class="val-na">—</span>') + '</td>';
+                html += '<td>' + (r.div_yield != null ? fmt(r.div_yield, 2) + '%' : '<span class="val-na">—</span>') + '</td>';
+                html += '<td>' + fmtPct(r.ytd) + '</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            el.innerHTML = html;
+        }).catch(function(err) {
+            el.innerHTML = '<div style="padding:20px;color:var(--text-muted);text-align:center;">Failed to load valuation data: ' + err.message + '</div>';
+            valuationsRendered = false;
+        });
     }
 
     // ── Page switching & lazy loading ────────────────────────────────
-    var pageTvCharts = {
-        'equities':     ['chart-spx','chart-ndx','chart-ftse','chart-eurostoxx','chart-topix'],
-        'commodities':  ['chart-wti','chart-brent','chart-natgas'],
-        'currencies':   ['chart-eurusd','chart-gbpusd','chart-usdjpy','chart-usdchf','chart-audusd','chart-usdcad','chart-nzdusd']
-    };
-
     function initPage(pageId) {
-        // TradingView advanced charts
-        if (pageTvCharts[pageId]) {
-            pageTvCharts[pageId].forEach(function(id) {
-                if (tvCharts[id]) createAdvancedChart(id, tvCharts[id]);
-            });
+        // SPX heatmap (Bloomberg Plotly treemap)
+        if (pageId === 'equities') {
+            renderHeatmap('plotly-heatmap');
+            renderValuationsTable('equity-valuations-table');
         }
-        // Special widgets
-        if (pageId === 'equities') createHeatmap('chart-heatmap');
-        if (pageId === 'fixed-income') createFedFundsCurve('chart-ff-curve');
-        if (pageId === 'currencies') createForexCrossRates('chart-fx-cross');
-        // Economic indicators and fixed income FRED charts are static images — no JS init needed
+        // Fed Funds forward curve & UST yield curve
+        if (pageId === 'fixed-income') {
+            renderFFCurve('plotly-ff-curve');
+            renderUSTCurve('plotly-ust-curve');
+        }
+        // Commodity forward curves
+        if (pageId === 'commodities') {
+            commodityCurveDefs.forEach(function(def) { renderCommodityCurve(def); });
+        }
+        // Plotly charts (all pages)
+        initPlotlyCharts(pageId);
     }
 
     function showPage(pageId, btn) {
-        // Hide all pages
         document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-        // Show selected page
         document.getElementById('page-' + pageId).classList.add('active');
-        // Update tab buttons
         document.querySelectorAll('.tab-nav button').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        // Lazy-load TradingView charts
         initPage(pageId);
     }
+
+    // ── Drag & Drop reordering ─────────────────────────────────────
+    (function() {
+        var dragSrc = null;
+
+        function getCardId(card) {
+            // Use the first plotly-chart or unique child id as identifier
+            var chart = card.querySelector('.plotly-chart');
+            if (chart && chart.id) return chart.id;
+            var header = card.querySelector('.card-header');
+            return header ? header.textContent.trim().substring(0, 40) : '';
+        }
+
+        function getPageId(dashboard) {
+            var page = dashboard.closest('.page');
+            return page ? page.id.replace('page-', '') : '';
+        }
+
+        function saveOrder(dashboard) {
+            var pageId = getPageId(dashboard);
+            if (!pageId) return;
+            var order = [];
+            dashboard.querySelectorAll('.card').forEach(function(card) {
+                order.push(getCardId(card));
+            });
+            try {
+                localStorage.setItem('dashboard-order-' + pageId, JSON.stringify(order));
+            } catch(e) {}
+        }
+
+        function restoreOrder(dashboard) {
+            var pageId = getPageId(dashboard);
+            if (!pageId) return;
+            var saved;
+            try {
+                saved = JSON.parse(localStorage.getItem('dashboard-order-' + pageId));
+            } catch(e) { return; }
+            if (!saved || !saved.length) return;
+
+            var cards = Array.from(dashboard.querySelectorAll('.card'));
+            var cardMap = {};
+            cards.forEach(function(card) {
+                cardMap[getCardId(card)] = card;
+            });
+
+            // Only reorder if all saved ids still exist
+            var allExist = saved.every(function(id) { return !!cardMap[id]; });
+            if (!allExist) return;
+
+            saved.forEach(function(id) {
+                if (cardMap[id]) dashboard.appendChild(cardMap[id]);
+            });
+            // Append any new cards not in saved order
+            cards.forEach(function(card) {
+                if (saved.indexOf(getCardId(card)) === -1) {
+                    dashboard.appendChild(card);
+                }
+            });
+        }
+
+        function initDragDrop(dashboard) {
+            var cards = dashboard.querySelectorAll('.card');
+
+            cards.forEach(function(card) {
+                card.setAttribute('draggable', 'true');
+
+                card.addEventListener('dragstart', function(e) {
+                    dragSrc = this;
+                    this.classList.add('dragging');
+                    dashboard.classList.add('drag-active');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', '');
+                });
+
+                card.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    dashboard.classList.remove('drag-active');
+                    dashboard.querySelectorAll('.card').forEach(function(c) {
+                        c.classList.remove('drag-over');
+                    });
+                    dragSrc = null;
+                });
+
+                card.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (this !== dragSrc) {
+                        this.classList.add('drag-over');
+                    }
+                });
+
+                card.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (!dragSrc || dragSrc === this) return;
+
+                    // Determine position: insert before or after based on mouse position
+                    var allCards = Array.from(dashboard.querySelectorAll('.card'));
+                    var srcIdx = allCards.indexOf(dragSrc);
+                    var tgtIdx = allCards.indexOf(this);
+
+                    if (srcIdx < tgtIdx) {
+                        dashboard.insertBefore(dragSrc, this.nextSibling);
+                    } else {
+                        dashboard.insertBefore(dragSrc, this);
+                    }
+
+                    saveOrder(dashboard);
+
+                    // Resize Plotly charts in moved cards (they may need relayout)
+                    setTimeout(function() {
+                        if (window.Plotly) {
+                            dashboard.querySelectorAll('.plotly-chart .js-plotly-plot').forEach(function(p) {
+                                Plotly.Plots.resize(p);
+                            });
+                        }
+                    }, 100);
+                });
+            });
+
+            // Restore saved order
+            restoreOrder(dashboard);
+        }
+
+        // Initialize drag-drop on all dashboards
+        document.querySelectorAll('.dashboard').forEach(initDragDrop);
+
+        // Re-init when new pages are shown (cards may not have been in DOM yet)
+        var origShowPage = window.showPage;
+        window.showPage = function(pageId, btn) {
+            origShowPage(pageId, btn);
+            var page = document.getElementById('page-' + pageId);
+            if (page) {
+                var dash = page.querySelector('.dashboard');
+                if (dash && !dash._dragInited) {
+                    dash._dragInited = true;
+                    initDragDrop(dash);
+                }
+            }
+        };
+
+        // Mark initially loaded dashboards
+        document.querySelectorAll('.dashboard').forEach(function(d) { d._dragInited = true; });
+
+        // Expose reset function
+        window.resetCardOrder = function(pageId) {
+            try { localStorage.removeItem('dashboard-order-' + pageId); } catch(e) {}
+            location.reload();
+        };
+    })();
+
+    // Reset card order for the currently active page
+    function resetCurrentPageOrder() {
+        var activePage = document.querySelector('.page.active');
+        if (!activePage) return;
+        var pageId = activePage.id.replace('page-', '');
+        window.resetCardOrder(pageId);
+    }
+
+    // Initialize the default page (economic) on load
+    initPage('economic');
     </script>
 </body>
 </html>
