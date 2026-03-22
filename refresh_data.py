@@ -15,6 +15,7 @@ Requirements:
 import blpapi
 import json
 import os
+import subprocess
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -814,5 +815,33 @@ def main():
         print("All series fetched successfully.")
 
 
+def git_push():
+    """Commit updated data files and push to GitHub to update Pages."""
+    try:
+        subprocess.run(["git", "add", "data/bloomberg.json", "data/bloomberg_data.js"],
+                       cwd=SCRIPT_DIR, check=True)
+
+        # Check if there are staged changes
+        result = subprocess.run(["git", "diff", "--cached", "--quiet"],
+                                cwd=SCRIPT_DIR)
+        if result.returncode == 0:
+            print("\nNo data changes to push.")
+            return
+
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+        subprocess.run(
+            ["git", "commit", "-m", f"Update Bloomberg data {timestamp}"],
+            cwd=SCRIPT_DIR, check=True
+        )
+        subprocess.run(["git", "push", "origin", "master"],
+                       cwd=SCRIPT_DIR, check=True)
+        print("\nPushed updated data to GitHub Pages.")
+    except subprocess.CalledProcessError as e:
+        print(f"\nGit push failed: {e}")
+    except FileNotFoundError:
+        print("\nGit not found on PATH — skipping push.")
+
+
 if __name__ == "__main__":
     main()
+    git_push()
